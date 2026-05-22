@@ -1,0 +1,40 @@
+{
+  "name": "parti",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3737",
+    "build": "next build",
+    "start": "next start --port 3737",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "framer-motion": "^12.0.0",
+    "lenis": "^1.1.0",
+    "fuse.js": "^7.0.0",
+    "d3-delaunay": "^6.0.4",
+    "react-force-graph-2d": "^1.27.0",
+    "mapbox-gl": "^3.7.0",
+    "zustand": "^5.0.0",
+    "lucide-react": "^0.456.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/d3-delaunay": "^6.0.4",
+    "@types/mapbox-gl": "^3.4.0",
+    "typescript": "^5.6.0",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "postcss": "^8.4.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.0.0"
+  }
+}

@@ -1,0 +1,219 @@
+@import "tailwindcss";
+@import "./themes.css";
+
+/* ============================================================
+   全站 reset + base
+   ============================================================ */
+
+html {
+  /* Lenis smooth scroll 接管、避免原生 scroll 干擾 */
+  scroll-behavior: auto;
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--ink-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.7;
+  letter-spacing: 0;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* 自訂 cursor、隱藏預設 */
+  cursor: none;
+}
+
+/* 互動元素強制隱藏預設 cursor */
+a, button, .parti-link, .sticker, [role="button"] {
+  cursor: none !important;
+}
+
+/* 圖片預設不可拖曳 */
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* ============================================================
+   Hidden-until-Touched 通用 class
+   ============================================================ */
+.huk-hidden {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--duration-mid) var(--ease-out),
+              transform var(--duration-mid) var(--ease-emphasized);
+}
+
+.huk-hidden.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.huk-hidden.is-fading {
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+/* Stagger delays */
+.huk-hidden:nth-child(1).is-visible { transition-delay: 0ms; }
+.huk-hidden:nth-child(2).is-visible { transition-delay: 80ms; }
+.huk-hidden:nth-child(3).is-visible { transition-delay: 160ms; }
+.huk-hidden:nth-child(4).is-visible { transition-delay: 240ms; }
+.huk-hidden:nth-child(5).is-visible { transition-delay: 320ms; }
+
+/* ============================================================
+   Breath animation (Hidden-until-Touched dot hint)
+   ============================================================ */
+@keyframes breath {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.5); opacity: 0.5; }
+}
+
+/* ============================================================
+   fadeIn for dialogs
+   ============================================================ */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ============================================================
+   Custom Cursor · 自訂朱紅圓 cursor
+   ============================================================ */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  background: var(--accent-red);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  mix-blend-mode: multiply;
+  transition:
+    width 200ms var(--ease-out),
+    height 200ms var(--ease-out),
+    background 200ms var(--ease-out),
+    border 200ms var(--ease-out),
+    opacity 200ms var(--ease-out);
+  /* transform 由 JS RAF 控制、不要 transition */
+}
+
+.custom-cursor.is-visible {
+  opacity: 1;
+}
+
+.custom-cursor.is-big {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid var(--accent-red);
+  margin: -10px 0 0 -10px;
+}
+
+/* Touch device · 隱藏自訂 cursor、恢復原生 */
+@media (hover: none) {
+  .custom-cursor { display: none; }
+  body { cursor: auto !important; }
+  a, button, .parti-link, .sticker, [role="button"] {
+    cursor: pointer !important;
+  }
+}
+
+/* ============================================================
+   ArchitectCard 4 種 hover 變體（XS flood red 用 CSS）
+   ============================================================ */
+.parti-card {
+  transition: background var(--duration-base) var(--ease-out),
+              color var(--duration-base) var(--ease-out);
+}
+
+.parti-card--XS:hover {
+  background: var(--accent-red);
+  color: #fff;
+}
+
+.parti-card--XS:hover h3,
+.parti-card--XS:hover p {
+  color: #fff !important;
+}
+
+/* L 卡 hover 時、玻璃強化 */
+.parti-card--L:hover,
+.parti-card--M:hover,
+.parti-card--S:hover {
+  background: var(--bg-card-glass-strong);
+  backdrop-filter: blur(48px) saturate(200%);
+  -webkit-backdrop-filter: blur(48px) saturate(200%);
+}
+
+/* ============================================================
+   響應式 glass blur 降強度
+   ============================================================ */
+@media (max-width: 767px) {
+  .glass { backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+  .glass-strong { backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px); }
+  .glass-frost { backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); }
+}
+
+/* ============================================================
+   PARTI Star 元件樣式
+   ============================================================ */
+.parti-star { display: inline-block; flex-shrink: 0; }
+
+.parti-star--xs { width: 12px; height: 12px; }
+.parti-star--sm { width: 16px; height: 16px; }
+.parti-star--md { width: 24px; height: 24px; }
+.parti-star--lg { width: 32px; height: 32px; }
+.parti-star--xl { width: 48px; height: 48px; }
+.parti-star--2xl { width: 80px; height: 80px; }
+.parti-star--3xl { width: 128px; height: 128px; }
+
+.parti-star--tertiary { color: var(--ink-tertiary); }
+.parti-star--primary { color: var(--ink-primary); }
+.parti-star--accent-red { color: var(--accent-red); }
+.parti-star--accent-cyan { color: var(--accent-cyan); }
+.parti-star--soft { color: var(--line-soft); }
+
+@keyframes star-breathe {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50%      { transform: rotate(15deg) scale(1.05); }
+}
+.parti-star--breathe {
+  animation: star-breathe 8s ease-in-out infinite;
+}
+
+@keyframes star-spin {
+  to { transform: rotate(360deg); }
+}
+.parti-star--spin {
+  animation: star-spin 800ms linear infinite;
+}
+
+@keyframes star-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.2); }
+}
+.parti-star--pulse {
+  animation: star-pulse 200ms ease-out;
+}
+
+.parti-star--hover-rotate {
+  transition: transform 200ms ease-out;
+}
+.parti-star--hover-rotate:hover {
+  animation: star-spin 1s linear infinite;
+  color: var(--accent-red);
+}
+
+@keyframes star-page-in {
+  0%   { transform: scale(0) rotate(0); opacity: 0; }
+  50%  { transform: scale(1) rotate(180deg); opacity: 1; }
+  100% { transform: scale(0) rotate(360deg); opacity: 0; }
+}
+.parti-star--page-transition {
+  animation: star-page-in 600ms var(--ease-emphasized);
+}
