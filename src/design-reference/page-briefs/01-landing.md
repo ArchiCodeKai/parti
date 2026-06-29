@@ -112,8 +112,8 @@ Screen 4 (auto): 隨機 10 條精選
 ║      ARCHITECTS         ║      BUILDINGS         ║
 ║       1 0 0 +           ║       6 0 0 +          ║
 ║                        ║                       ║
-║   [極淡灰小型 force      ║   [極淡灰線稿輪廓]        ║
-║    graph 漂浮]           ║                       ║
+║   [極淡灰小型 force      ║   [灰階 Fallingwater      ║
+║    graph 漂浮]           ║    建築圖版 + 玻璃折射]     ║
 ║                        ║                       ║
 ╠════════════════════════╬═══════════════════════╣
 ║                        ║                       ║
@@ -132,16 +132,18 @@ Screen 4 (auto): 隨機 10 條精選
 | 卡片 | 中文標題 | 英文標題 | 數量 | Motif |
 |---|---|---|---|---|
 | 左上 | 人物 | ARCHITECTS | 100+ | 極淡灰 force graph |
-| 右上 | 建築 | BUILDINGS | 600+ | 線稿輪廓 |
+| 右上 | 建築 | BUILDINGS | 600+ | 灰階 Fallingwater 建築圖版 |
 | 左下 | 運動 | MOVEMENTS | 20+ | Voronoi 細胞 |
 | 右下 | 地圖 | MAP | WORLD | 世界地圖縮影 + 朱紅點 |
 
 ### 卡片視覺
 
-- 每卡 50vw × 50vh
-- 邊框 1px `var(--line)`、無圓角（或最多 2px）
-- **無陰影、無 gradient**
-- Hover：邊框瞬間變朱紅 + 整卡 scale 1.02 + cursor: zoom-in
+- v1 landing 正式實作已改為 scroll-linked central Material Assembly Stage，不再以靜態 2×2 dashboard card grid 為最終方向。
+- 每個入口仍保留清楚可點擊狀態，但主要敘事來自中央材質舞台與右側 chapter nav。
+- **Buildings / 建築 local override**：背景圖版、玻璃材質、右側 active marker、全站 cursor 在 Buildings 段都暫時改為灰階。
+- Buildings 不使用 generic cube、藍/灰青玻璃、朱紅掃描線或 raster 背景圖；使用 SVG 式 Fallingwater / 落水山莊線稿圖版。
+- Fallingwater 線稿必須保持乾淨清楚；玻璃效果用獨立灰階擦亮 / 折射層表現，不用模糊錯位的第二張線稿。
+- 灰階材質深度來自陰影、線重、透明度、blur、mask、折射偏移與建材/玻璃/水膜質感，不靠色彩。
 
 ### 文字排版
 

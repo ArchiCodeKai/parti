@@ -2,7 +2,7 @@
  * /compare · 比較工具 hero piece
  *
  * 規格見 docs/04-頁面設計/compare-tool.md
- * N→幾何映射見 src/lib/utils.ts nToGeometry()
+ * N→幾何映射見 src/lib/utils.ts nToGeometry()、視覺見 RelationGeometry
  */
 
 "use client";
@@ -15,6 +15,7 @@ import {
   computeCommonalities,
 } from "@/lib/compare/dispersion";
 import { nToGeometry } from "@/lib/utils";
+import { RelationGeometry } from "@/components/geometry/RelationGeometry";
 import type { Architect } from "@/types/entity";
 
 export default function ComparePage() {
@@ -214,13 +215,7 @@ export default function ComparePage() {
           </div>
         )}
 
-        {N >= 1 && (
-          <GeometryViz
-            architects={architects}
-            geometry={geometry}
-            dispersion={dispersion}
-          />
-        )}
+        {N >= 1 && <RelationGeometry architects={architects} />}
 
         {N >= 1 && (
           <p
@@ -335,231 +330,5 @@ export default function ComparePage() {
         </section>
       )}
     </main>
-  );
-}
-
-/** 依 N 渲染對應幾何 */
-function GeometryViz({
-  architects,
-  geometry,
-  dispersion,
-}: {
-  architects: Architect[];
-  geometry: ReturnType<typeof nToGeometry>;
-  dispersion: number;
-}) {
-  const size = 400;
-  const cx = size / 2;
-  const cy = size / 2;
-
-  // 計算 N 個點均勻分布在圓上的座標
-  const points = architects.map((_, i) => {
-    const angle = (i / architects.length) * Math.PI * 2 - Math.PI / 2;
-    const r = architects.length === 1 ? 0 : 120;
-    return {
-      x: cx + r * Math.cos(angle),
-      y: cy + r * Math.sin(angle),
-    };
-  });
-
-  // N=3 圓圈視覺規範
-  const circumRadius = 80 + dispersion * 200;
-  const circumSaturation = 80 - dispersion * 50;
-  const circumOpacity = 1.0 - dispersion * 0.5;
-
-  return (
-    <svg
-      viewBox={`0 0 ${size} ${size}`}
-      style={{
-        width: "100%",
-        maxWidth: "500px",
-        aspectRatio: "1 / 1",
-      }}
-    >
-      {/* N=1 同心圓 */}
-      {geometry === "concentric" && (
-        <g>
-          {[40, 80, 120, 160].map((r, i) => (
-            <circle
-              key={r}
-              cx={cx}
-              cy={cy}
-              r={r}
-              fill="none"
-              stroke="var(--accent-red)"
-              strokeWidth={0.8}
-              opacity={1 - i * 0.2}
-            />
-          ))}
-          <circle cx={cx} cy={cy} r={6} fill="var(--accent-red)" />
-        </g>
-      )}
-
-      {/* N=2 中垂線 */}
-      {geometry === "bisector" && (
-        <g>
-          <line
-            x1={points[0].x}
-            y1={points[0].y}
-            x2={points[1].x}
-            y2={points[1].y}
-            stroke="var(--ink-tertiary)"
-            strokeWidth={0.5}
-            strokeDasharray="4 4"
-          />
-          {/* 中垂線（垂直於兩點連線、過中點） */}
-          {(() => {
-            const mx = (points[0].x + points[1].x) / 2;
-            const my = (points[0].y + points[1].y) / 2;
-            const dx = points[1].x - points[0].x;
-            const dy = points[1].y - points[0].y;
-            const len = Math.sqrt(dx * dx + dy * dy);
-            // 法向量（垂直）
-            const nx = -dy / len;
-            const ny = dx / len;
-            const halfLen = 150;
-            return (
-              <line
-                x1={mx + nx * halfLen}
-                y1={my + ny * halfLen}
-                x2={mx - nx * halfLen}
-                y2={my - ny * halfLen}
-                stroke="var(--accent-red)"
-                strokeWidth={1.5}
-              />
-            );
-          })()}
-          {points.map((p, i) => (
-            <circle
-              key={i}
-              cx={p.x}
-              cy={p.y}
-              r={8}
-              fill="var(--accent-red)"
-            />
-          ))}
-        </g>
-      )}
-
-      {/* N=3 三點定圓 */}
-      {geometry === "circumcircle" && (
-        <g>
-          <circle
-            cx={cx}
-            cy={cy}
-            r={circumRadius}
-            fill={`hsla(5, ${circumSaturation}%, 50%, ${circumOpacity})`}
-            stroke="var(--accent-red)"
-            strokeWidth={1}
-          />
-          {points.map((p, i) => (
-            <g key={i}>
-              <line
-                x1={points[i].x}
-                y1={points[i].y}
-                x2={points[(i + 1) % 3].x}
-                y2={points[(i + 1) % 3].y}
-                stroke="var(--ink-primary)"
-                strokeWidth={0.5}
-                opacity={0.3}
-              />
-              <circle
-                cx={p.x}
-                cy={p.y}
-                r={8}
-                fill="var(--accent-red)"
-              />
-            </g>
-          ))}
-        </g>
-      )}
-
-      {/* N=4-6 Delaunay 三角網（簡化：所有點互連） */}
-      {geometry === "delaunay" && (
-        <g>
-          {points.map((p1, i) =>
-            points.slice(i + 1).map((p2, j) => (
-              <line
-                key={`${i}-${j}`}
-                x1={p1.x}
-                y1={p1.y}
-                x2={p2.x}
-                y2={p2.y}
-                stroke="var(--accent-red)"
-                strokeWidth={0.6}
-                opacity={0.6}
-              />
-            )),
-          )}
-          {points.map((p, i) => (
-            <circle
-              key={i}
-              cx={p.x}
-              cy={p.y}
-              r={6}
-              fill="var(--accent-red)"
-            />
-          ))}
-        </g>
-      )}
-
-      {/* N=7-12 Voronoi（簡化：圓點 + 半徑示意） */}
-      {geometry === "voronoi" && (
-        <g>
-          {points.map((p, i) => (
-            <g key={i}>
-              <circle
-                cx={p.x}
-                cy={p.y}
-                r={40}
-                fill="none"
-                stroke="var(--accent-red)"
-                strokeWidth={0.5}
-                opacity={0.4}
-                strokeDasharray="3 3"
-              />
-              <circle
-                cx={p.x}
-                cy={p.y}
-                r={5}
-                fill="var(--accent-red)"
-              />
-            </g>
-          ))}
-        </g>
-      )}
-
-      {/* N≥13 Force Graph（簡化：所有點 + 隨機連線） */}
-      {geometry === "force-graph" && (
-        <g>
-          {points.map((p1, i) =>
-            points.slice(i + 1).map((p2, j) => {
-              if (Math.random() > 0.7) return null;
-              return (
-                <line
-                  key={`${i}-${j}`}
-                  x1={p1.x}
-                  y1={p1.y}
-                  x2={p2.x}
-                  y2={p2.y}
-                  stroke="var(--ink-tertiary)"
-                  strokeWidth={0.4}
-                  opacity={0.4}
-                />
-              );
-            }),
-          )}
-          {points.map((p, i) => (
-            <circle
-              key={i}
-              cx={p.x}
-              cy={p.y}
-              r={4}
-              fill="var(--accent-red)"
-            />
-          ))}
-        </g>
-      )}
-    </svg>
   );
 }

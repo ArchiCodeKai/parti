@@ -21,37 +21,44 @@
 
 ---
 
-## 範例紀錄（將來實際填入）
+## 版本紀錄
 
-### v1-landing — TBD（待 Claude Design 第一次產出後填入）
+### v1-landing — 2026-05-22
 
-**Base**: 第一次生成
+**Base**: 第一版 Landing Codex 實作文件骨架
 **Brief**:
 - `CLAUDE_DESIGN_BRIEF.md`
 - `page-briefs/01-landing.md`
+- `docs/02-MVP規劃/MVP-v1.md`
+- `docs/04-頁面設計/landing-hero.md`
 
-**Variant**: 預設
+**Variant**: Codex 開發準備版，靜態 HTML prototype 改為 optional
 
 **Changes**:
-- 初版 Landing 頁、4 屏 vertical scroll
-- Hero 大字 + 構成主義 motif
-- 4 大入口 2×2 grid
-- 策展宣言屏含三點定圓動畫
-- 隨機 10 條精選 list
+- 建立 `v1-landing/` 版本資料夾。
+- 補 `source-prompt.md`，作為 Codex 正式實作的第一版輸入。
+- 補 `design-system.md`，整理 v1 landing 需要遵守的 token、排版、layout、motion 與 hard don'ts。
+- 補 `notes.md`，列出 review checklist 與下一輪實作暫停點。
+- 補 `CLAUDE_DESIGN_BRIEF.md` 相容入口，避免既有 brief 引用找不到檔案。
+- 將 `index.html` 與 screenshots 流程降級為 optional，避免在正式開發期間增加平行 prototype 維護成本。
+- 補齊正式 Next.js landing 四屏結構：Hero、四大入口、策展宣言、Random Picks、Footer。
 
 **Issues**:
-- 待填入
+- Buildings / Movements / Map 尚無 route，因此首頁先保留靜態入口 tile，不做 404 連結。
+- Random Picks 的刷新按鈕尚未接資料邏輯。
+- 尚未建立 `promoted/landing`，因目前不走靜態 prototype 採用流程。
 
-**Decision**: 待填入
+**Decision**: 進入正式 Next.js landing 骨架，待視覺 review 後微調
 
 **Files**:
-- `v1-landing/index.html`
 - `v1-landing/design-system.md`
 - `v1-landing/source-prompt.md`
-- `v1-landing/screenshots/desktop-1440.png`
-- `v1-landing/screenshots/tablet-768.png`
-- `v1-landing/screenshots/mobile-380.png`
 - `v1-landing/notes.md`
+- `src/app/page.tsx`
+- `src/components/landing/LandingSections.tsx`
+- `src/components/landing/PyramidHero.tsx`
+- `src/app/globals.css`
+- `src/app/themes.css`
 
 ---
 
@@ -73,7 +80,7 @@
 
 ## 統計
 
-**版本總數**：0
+**版本總數**：1
 **正式採用**：0
 **廢棄版本**：0
 

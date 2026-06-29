@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { CmdKDialog } from "@/components/layout/CmdKDialog";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { CompareBar } from "@/components/layout/CompareBar";
 
 export const metadata: Metadata = {
   title: "PARTI · 一部建築圖鑑",
@@ -29,8 +31,10 @@ export default function RootLayout({
     <html lang="zh-Hant">
       <body>
         <CustomCursor />
+        <SiteHeader />
         <CmdKDialog />
         {children}
+        <CompareBar />
       </body>
     </html>
   );

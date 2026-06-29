@@ -8,8 +8,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ARCHITECTS, getArchitectBySlug } from "@/lib/data/architects";
+import { getBuildingBySlug } from "@/lib/data/buildings";
 import { useCompareStore } from "@/store/useCompareStore";
 
 const MOVEMENT_COLORS: Record<string, string> = {
@@ -194,16 +196,19 @@ export default function ArchitectPage() {
           }}
         >
           {arch.movements.map((m) => (
-            <span
+            <Link
               key={m.id}
+              href={`/movements/${m.id}`}
               className="badge-soft"
               style={{
                 background: m.weight === "primary" ? `${colorFor(m.id)}30` : "rgba(15,15,15,0.04)",
                 color: colorFor(m.id),
+                textDecoration: "none",
+                cursor: "none",
               }}
             >
               {m.id.replace(/-/g, " ").toUpperCase()}
-            </span>
+            </Link>
           ))}
         </div>
       </header>
@@ -281,20 +286,42 @@ export default function ArchitectPage() {
                   gap: "var(--space-3)",
                 }}
               >
-                {arch.buildings.map((b) => (
-                  <li
-                    key={b}
-                    style={{
-                      padding: "var(--space-3) var(--space-4)",
-                      borderBottom: "1px solid var(--line-hair)",
-                      fontFamily: "var(--font-display)",
-                      fontWeight: 200,
-                      fontSize: "var(--text-lg)",
-                    }}
-                  >
-                    {b.replace(/-/g, " ")}
-                  </li>
-                ))}
+                {arch.buildings.map((b) => {
+                  const bld = getBuildingBySlug(b);
+                  return (
+                    <li key={b} style={{ borderBottom: "1px solid var(--line-hair)" }}>
+                      <Link
+                        href={`/buildings/${b}`}
+                        style={{
+                          display: "flex",
+                          alignItems: "baseline",
+                          gap: "var(--space-3)",
+                          padding: "var(--space-3) var(--space-4)",
+                          textDecoration: "none",
+                          cursor: "none",
+                          color: "var(--ink-primary)",
+                          fontFamily: "var(--font-display)",
+                          fontWeight: 200,
+                          fontSize: "var(--text-lg)",
+                        }}
+                      >
+                        <span>{bld ? bld.name.en : b.replace(/-/g, " ")}</span>
+                        {bld && (
+                          <span
+                            style={{
+                              fontFamily: "var(--font-cjk)",
+                              fontSize: "14px",
+                              letterSpacing: "0.08em",
+                              color: "var(--ink-tertiary)",
+                            }}
+                          >
+                            {bld.name.zh}
+                          </span>
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           )}

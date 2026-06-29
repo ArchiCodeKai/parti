@@ -87,6 +87,23 @@ review 後的決策。
 
 ---
 
+## Codex 正式開發模式例外
+
+如果專案已經進入正式 Codex / Next.js 開發，且不需要 Claude Design 產出獨立靜態稿，則不必為了形式建立 `index.html`、`screenshots/` 或 `promoted/`。
+
+此時版本資料夾可作為實作規格與 handoff 紀錄，最小結構為：
+
+```text
+v{N}-{slug}/
+├── source-prompt.md
+├── design-system.md
+└── notes.md
+```
+
+只有在需要高風險視覺探索、外部 review、或保留 Claude Design 產物時，才回到完整 prototype 流程。
+
+---
+
 ## source-prompt.md 模板
 
 每個版本資料夾都要寫一份、記錄「**這版本怎麼生出來的**」：

@@ -16,6 +16,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Fuse from "fuse.js";
 import { ARCHITECTS } from "@/lib/data/architects";
+import { useCmdKStore } from "@/store/useCmdKStore";
 import type { Architect } from "@/types/entity";
 
 interface SearchResult extends Architect {
@@ -24,7 +25,9 @@ interface SearchResult extends Architect {
 
 export function CmdKDialog() {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const open = useCmdKStore((s) => s.open);
+  const setOpen = useCmdKStore((s) => s.setOpen);
+  const toggleOpen = useCmdKStore((s) => s.toggle);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -63,7 +66,7 @@ export function CmdKDialog() {
       // ⌘K / Ctrl+K
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        setOpen((prev) => !prev);
+        toggleOpen();
         return;
       }
 
@@ -102,7 +105,7 @@ export function CmdKDialog() {
 
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [open, results, selectedIndex, router]);
+  }, [open, results, selectedIndex, router, setOpen, toggleOpen]);
 
   // 開啟時 focus input + 重置
   useEffect(() => {

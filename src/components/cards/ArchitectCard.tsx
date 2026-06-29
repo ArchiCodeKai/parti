@@ -89,6 +89,15 @@ export function ArchitectCard({
       }}
       whileHover={hoverProps}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label={`${name.en} ${name.zh}`}
     >
       <div
         style={{

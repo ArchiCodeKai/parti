@@ -58,6 +58,14 @@ export function useHiddenUntilTouched(
     );
   }, [hideAfterIdleMs]);
 
+  const hoverProps = triggerOnHover
+    ? {
+        onMouseEnter: onActivity,
+        onMouseMove: onActivity,
+        onFocus: onActivity,
+      }
+    : {};
+
   // Scroll trigger
   useEffect(() => {
     if (!triggerOnScroll) return;
@@ -77,5 +85,5 @@ export function useHiddenUntilTouched(
     return () => window.removeEventListener("scroll", handleScroll);
   }, [triggerOnScroll, scrollThresholdPercent, onActivity]);
 
-  return { visible, onActivity };
+  return { visible, onActivity, hoverProps };
 }

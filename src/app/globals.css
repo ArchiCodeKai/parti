@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@200;300;400;500;600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap");
+
 @import "tailwindcss";
 @import "./themes.css";
 
@@ -114,6 +116,15 @@ img {
   margin: -10px 0 0 -10px;
 }
 
+body.is-landing-building-active .custom-cursor {
+  background: rgba(15, 15, 15, 0.5);
+}
+
+body.is-landing-building-active .custom-cursor.is-big {
+  background: transparent;
+  border-color: rgba(15, 15, 15, 0.42);
+}
+
 /* Touch device · 隱藏自訂 cursor、恢復原生 */
 @media (hover: none) {
   .custom-cursor { display: none; }
@@ -216,4 +227,1408 @@ img {
 }
 .parti-star--page-transition {
   animation: star-page-in 600ms var(--ease-emphasized);
+}
+
+/* ============================================================
+   Landing v1 · four-screen formal skeleton
+   ============================================================ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.landing-page {
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--bg-page);
+}
+
+.pyramid-hero-sticky {
+  flex-direction: column;
+  gap: clamp(28px, 5vh, 56px);
+  padding-inline: clamp(18px, 4vw, 72px);
+  overflow: hidden;
+}
+
+.pyramid-hero-title {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1440px);
+  justify-content: center;
+  gap: clamp(0.18em, 2.5vw, 0.5em);
+  font-size: clamp(42px, 10.5vw, 180px);
+  transform: translateY(clamp(10px, 3vh, 32px));
+  will-change: transform, filter;
+}
+
+.pyramid-hero-sheen {
+  position: absolute;
+  z-index: 0;
+  top: 10%;
+  left: 0;
+  width: min(52vw, 760px);
+  height: 72vh;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      104deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 28%,
+      rgba(255, 255, 255, 0.68) 48%,
+      rgba(255, 255, 255, 0.12) 66%,
+      transparent 100%
+    );
+  filter: blur(22px);
+  mix-blend-mode: screen;
+  transform: skewX(-14deg);
+}
+
+.pixel-pyramid-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 0.98em;
+  overflow: visible;
+  flex-shrink: 0;
+  perspective: 520px;
+}
+
+.pixel-pyramid-rotor {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.pixel-pyramid-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  shape-rendering: crispEdges;
+}
+
+.pixel-pyramid-guide {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent-red) 34%, transparent);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.pixel-pyramid-shared-edge,
+.pixel-pyramid-base-edge {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent-red) 58%, black 18%);
+  vector-effect: non-scaling-stroke;
+}
+
+.pixel-pyramid-shared-edge {
+  stroke-width: 1.4;
+}
+
+.pixel-pyramid-base-edge {
+  stroke-width: 1.8;
+}
+
+.pixel-pyramid-layer {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.pyramid-hero-meta {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+  text-align: center;
+  animation: huk-peek 4.2s var(--ease-out) 800ms forwards;
+}
+
+.pyramid-hero-meta p {
+  margin: 0;
+}
+
+@keyframes huk-peek {
+  0%, 58% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0.32;
+    transform: translateY(4px);
+  }
+}
+
+.pyramid-hero-sticky:hover .pyramid-hero-meta,
+.pyramid-hero-sticky:focus-within .pyramid-hero-meta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.landing-section {
+  position: relative;
+  min-height: 100vh;
+  padding: clamp(64px, 8vw, 112px) clamp(18px, 4vw, 64px);
+}
+
+.landing-section-kicker {
+  margin: 0 0 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+}
+
+.landing-entry-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+.landing-entry-surface {
+  position: absolute;
+  inset: clamp(36px, 5vw, 80px) clamp(18px, 4vw, 64px);
+  z-index: -1;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid var(--line-hair);
+  border-radius: var(--r-xl);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 40px 120px -90px rgba(15, 15, 15, 0.28);
+  backdrop-filter: blur(34px) saturate(158%);
+  -webkit-backdrop-filter: blur(34px) saturate(158%);
+}
+
+.landing-entry-surface-grain,
+.landing-entry-surface-glint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.landing-entry-surface-grain {
+  opacity: 0;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(15, 15, 15, 0.026) 0,
+      rgba(15, 15, 15, 0.026) 1px,
+      transparent 1px,
+      transparent 22px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(15, 15, 15, 0.018) 0,
+      rgba(15, 15, 15, 0.018) 1px,
+      transparent 1px,
+      transparent 28px
+    );
+  mix-blend-mode: multiply;
+}
+
+.landing-entry-surface-glint {
+  opacity: 0.38;
+  background:
+    radial-gradient(circle at 24% 18%, rgba(255, 255, 255, 0.78), transparent 26%),
+    radial-gradient(circle at 78% 72%, rgba(255, 255, 255, 0.52), transparent 32%);
+}
+
+.landing-entry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: min(76vh, 820px);
+  border-top: 1px solid var(--line-hair);
+  border-bottom: 1px solid var(--line-hair);
+  border-radius: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.landing-entry-section.is-assembly .landing-entry-grid {
+  position: relative;
+  display: block;
+  width: min(68vw, 920px);
+  min-height: min(68vh, 680px);
+  margin-inline: clamp(18px, 9vw, 156px) auto;
+  border: 0;
+  overflow: visible;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.landing-entry-tile {
+  position: relative;
+  min-height: 38vh;
+  padding: clamp(28px, 4vw, 64px);
+  color: var(--ink-primary);
+  text-decoration: none;
+  border-right: 1px solid var(--line-hair);
+  border-bottom: 1px solid var(--line-hair);
+  overflow: hidden;
+  transform-origin: center;
+  will-change: transform, opacity, filter;
+  transition:
+    background var(--duration-mid) var(--ease-out),
+    color var(--duration-mid) var(--ease-out);
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile {
+  --entry-material-opacity: 0.08;
+  --entry-material-glint-opacity: 0.04;
+  --entry-material-shift: 0px;
+
+  position: absolute;
+  inset: 0;
+  display: block;
+  min-height: auto;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile:first-child {
+  opacity: 1;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile::before,
+.landing-entry-section.is-assembly .landing-entry-tile::after {
+  content: "";
+  position: absolute;
+  inset: clamp(20px, 3vw, 48px);
+  z-index: 0;
+  border-radius: var(--r-lg);
+  pointer-events: none;
+  opacity: var(--entry-material-opacity);
+  transform: translate3d(var(--entry-material-shift), 0, 0);
+  transition: opacity var(--duration-mid) var(--ease-out);
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile::before {
+  mix-blend-mode: multiply;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile::after {
+  opacity: var(--entry-material-glint-opacity);
+  mix-blend-mode: screen;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile.is-active {
+  pointer-events: auto;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--graph::before {
+  background-image:
+    radial-gradient(circle at 26% 38%, rgba(239, 59, 45, 0.2) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 58% 46%, rgba(239, 59, 45, 0.17) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 72% 25%, rgba(15, 15, 15, 0.09) 0 1px, transparent 1.5px),
+    linear-gradient(36deg, transparent 35%, rgba(15, 15, 15, 0.055) 35.3%, transparent 35.9%),
+    linear-gradient(117deg, transparent 45%, rgba(239, 59, 45, 0.07) 45.3%, transparent 45.8%),
+    repeating-linear-gradient(0deg, rgba(15, 15, 15, 0.026) 0 1px, transparent 1px 38px),
+    repeating-linear-gradient(90deg, rgba(15, 15, 15, 0.02) 0 1px, transparent 1px 34px);
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 var(--entry-material-shift),
+    var(--entry-material-shift) 0;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--graph::after {
+  background:
+    radial-gradient(circle at 34% 42%, rgba(255, 255, 255, 0.94), transparent 18%),
+    linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, 0.58) 44%, transparent 62%);
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--building::before {
+  background-color: rgba(255, 255, 255, 0.72);
+  background-image:
+    linear-gradient(28deg, transparent 35%, rgba(15, 15, 15, 0.11) 35.18%, transparent 35.54%),
+    linear-gradient(151deg, transparent 55%, rgba(15, 15, 15, 0.08) 55.18%, transparent 55.54%),
+    linear-gradient(180deg, transparent 31%, rgba(15, 15, 15, 0.05) 31.12%, transparent 31.38%),
+    linear-gradient(90deg, transparent 72%, rgba(15, 15, 15, 0.045) 72.12%, transparent 72.36%),
+    repeating-linear-gradient(90deg, rgba(15, 15, 15, 0.03) 0 1px, transparent 1px 36px),
+    repeating-linear-gradient(0deg, rgba(15, 15, 15, 0.022) 0 1px, transparent 1px 40px);
+  background-size:
+    auto,
+    auto,
+    auto,
+    auto,
+    36px 100%,
+    100% 40px;
+  background-position:
+    0 0,
+    0 0,
+    0 var(--entry-material-shift),
+    var(--entry-material-shift) 0,
+    var(--entry-material-shift) 0,
+    0 var(--entry-material-shift);
+  border: 1px solid rgba(15, 15, 15, 0.045);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.58),
+    inset 0 22px 78px rgba(255, 255, 255, 0.24),
+    inset 0 -1px 0 rgba(15, 15, 15, 0.035);
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--building.is-active::before {
+  opacity: 0.86;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--building::after {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), transparent 36%),
+    linear-gradient(106deg, transparent 16%, rgba(255, 255, 255, 0.86) 43%, transparent 63%),
+    radial-gradient(ellipse at 62% 42%, rgba(255, 255, 255, 0.78), transparent 34%),
+    linear-gradient(28deg, transparent 47%, rgba(15, 15, 15, 0.045) 47.18%, transparent 47.48%);
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--building.is-active::after {
+  opacity: 0.74;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--building.is-active .landing-entry-motif {
+  color: rgba(15, 15, 15, 0.44);
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--building.is-active .landing-entry-motif path {
+  stroke-width: 1.45;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--building.is-active .landing-entry-motif-construction {
+  opacity: 0.72;
+  stroke-width: 1.05;
+}
+
+.landing-building-material {
+  position: absolute;
+  z-index: 0;
+  inset: clamp(22px, 4vw, 58px) clamp(12px, 4vw, 62px);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(22px, 10px, 0) scale(0.982);
+  transition:
+    opacity 520ms var(--ease-out),
+    transform 760ms var(--ease-emphasized);
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--building.is-active .landing-building-material {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.landing-building-diagram {
+  position: absolute;
+  right: clamp(-12px, 1vw, 14px);
+  top: 7%;
+  width: min(74%, 620px);
+  height: auto;
+  pointer-events: none;
+  overflow: visible;
+  color: rgba(15, 15, 15, 0.5);
+  filter: drop-shadow(0 18px 22px rgba(15, 15, 15, 0.028));
+  transform: translate3d(calc(var(--entry-material-shift) * -0.1), 0, 0);
+  will-change: transform, opacity, filter;
+}
+
+.landing-building-diagram--base {
+  opacity: 0.58;
+}
+
+.fallingwater-model-canvas {
+  position: absolute;
+  z-index: 1;
+  right: clamp(-18px, 1vw, 10px);
+  top: 3%;
+  width: min(76%, 650px);
+  height: min(78%, 430px);
+  display: block;
+  pointer-events: auto;
+  touch-action: none;
+  opacity: 0.9;
+  filter: drop-shadow(0 24px 34px rgba(15, 15, 15, 0.055));
+  transform: translate3d(calc(var(--entry-material-shift) * -0.08), 0, 0);
+  transition:
+    opacity 520ms var(--ease-out),
+    filter 520ms var(--ease-out),
+    transform 760ms var(--ease-emphasized);
+}
+
+.fallingwater-model-canvas::after {
+  content: "";
+  position: absolute;
+  inset: 7% 2% 8% 6%;
+  pointer-events: none;
+  background:
+    linear-gradient(122deg, rgba(255, 255, 255, 0.62), transparent 34%),
+    radial-gradient(ellipse at 55% 78%, rgba(15, 15, 15, 0.05), transparent 52%);
+  mix-blend-mode: screen;
+}
+
+.fallingwater-model-canvas__surface {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: none;
+}
+
+.fallingwater-slab,
+.fallingwater-core,
+.fallingwater-vertical,
+.fallingwater-glass,
+.fallingwater-contour,
+.fallingwater-water,
+.fallingwater-hatch,
+.fallingwater-terrain,
+.fallingwater-parapet,
+.fallingwater-pier,
+.fallingwater-ledge {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.fallingwater-slab {
+  stroke-width: 2.15;
+  opacity: 0.82;
+}
+
+.fallingwater-slab--roof {
+  opacity: 0.7;
+}
+
+.fallingwater-slab--middle {
+  opacity: 0.92;
+}
+
+.fallingwater-slab--left,
+.fallingwater-slab--right {
+  opacity: 0.76;
+}
+
+.fallingwater-core {
+  stroke-width: 1.55;
+  opacity: 0.72;
+}
+
+.fallingwater-core--face,
+.fallingwater-core--side {
+  fill: rgba(15, 15, 15, 0.024);
+}
+
+.fallingwater-core--side {
+  fill: rgba(15, 15, 15, 0.036);
+}
+
+.fallingwater-vertical,
+.fallingwater-glass,
+.fallingwater-pier,
+.fallingwater-parapet {
+  stroke-width: 1.15;
+  opacity: 0.44;
+}
+
+.fallingwater-hatch {
+  stroke-width: 0.9;
+  stroke-dasharray: 2 6;
+  opacity: 0.38;
+}
+
+.fallingwater-water,
+.fallingwater-contour {
+  stroke-width: 1;
+  opacity: 0.22;
+}
+
+.fallingwater-terrain {
+  stroke-width: 1.05;
+  opacity: 0.2;
+}
+
+.fallingwater-terrain--step {
+  opacity: 0.28;
+}
+
+.fallingwater-ledge {
+  fill: rgba(15, 15, 15, 0.018);
+  stroke-width: 1.05;
+  opacity: 0.34;
+}
+
+.fallingwater-shadow {
+  fill: rgba(15, 15, 15, 0.045);
+  stroke: none;
+}
+
+.fallingwater-shadow--site {
+  opacity: 0.22;
+}
+
+.fallingwater-shadow--upper {
+  opacity: 0.42;
+}
+
+.fallingwater-shadow--middle {
+  opacity: 0.5;
+}
+
+.fallingwater-shadow--lower {
+  opacity: 0.58;
+}
+
+.fallingwater-shadow--base {
+  opacity: 0.34;
+}
+
+.landing-entry-motif--fallingwater {
+  width: min(52%, 360px);
+  right: clamp(12px, 4vw, 56px);
+  bottom: clamp(36px, 5vw, 78px);
+}
+
+.landing-entry-motif--fallingwater .fallingwater-shadow {
+  fill: rgba(15, 15, 15, 0.045);
+  stroke: none;
+  opacity: 0.18;
+}
+
+.landing-entry-motif--fallingwater .fallingwater-contour,
+.landing-entry-motif--fallingwater .fallingwater-water,
+.landing-entry-motif--fallingwater .fallingwater-terrain,
+.landing-entry-motif--fallingwater .fallingwater-ledge {
+  opacity: 0.16;
+}
+
+.landing-building-material__pane,
+.landing-building-material__shine,
+.landing-building-material__fold,
+.landing-building-material__shadow {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--r-lg) - 10px);
+  pointer-events: none;
+}
+
+.landing-building-material__pane {
+  left: 39%;
+  width: 50%;
+  height: 78%;
+  top: 6%;
+  overflow: hidden;
+  border: 1px solid rgba(15, 15, 15, 0.075);
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.28) 44%, rgba(255, 255, 255, 0.08) 68%),
+    linear-gradient(28deg, transparent 0 36%, rgba(255, 255, 255, 0.72) 36.2%, transparent 36.8%),
+    linear-gradient(151deg, transparent 0 58%, rgba(15, 15, 15, 0.052) 58.12%, transparent 58.52%),
+    repeating-linear-gradient(90deg, rgba(15, 15, 15, 0.028) 0 1px, transparent 1px 34px),
+    repeating-linear-gradient(0deg, rgba(15, 15, 15, 0.02) 0 1px, transparent 1px 38px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.96),
+    inset 1px 0 0 rgba(255, 255, 255, 0.72),
+    inset -1px 0 0 rgba(15, 15, 15, 0.035),
+    inset 0 -1px 0 rgba(15, 15, 15, 0.04),
+    26px 30px 84px -68px rgba(15, 15, 15, 0.38);
+  transform: skewX(-4.5deg) translate3d(calc(var(--entry-material-shift) * 0.34), 0, 0);
+  backdrop-filter: blur(1.4px) contrast(112%) saturate(102%);
+  -webkit-backdrop-filter: blur(1.4px) contrast(112%) saturate(102%);
+  mix-blend-mode: screen;
+}
+
+.landing-building-material__pane::before,
+.landing-building-material__pane::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.landing-building-material__pane::before {
+  background:
+    linear-gradient(101deg, transparent 0 21%, rgba(255, 255, 255, 0.78) 22%, transparent 25%),
+    linear-gradient(131deg, transparent 0 54%, rgba(255, 255, 255, 0.58) 55%, transparent 59%),
+    linear-gradient(34deg, transparent 0 71%, rgba(15, 15, 15, 0.046) 71.2%, transparent 72%);
+  opacity: 0.74;
+}
+
+.landing-building-material__pane::after {
+  inset: 1px;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at 32% 18%, rgba(255, 255, 255, 0.92), transparent 28%),
+    radial-gradient(ellipse at 78% 72%, rgba(255, 255, 255, 0.42), transparent 34%);
+  opacity: 0.62;
+}
+
+.landing-building-material__shine {
+  left: 35%;
+  top: 4%;
+  width: 60%;
+  height: 82%;
+  opacity: 0;
+  background:
+    linear-gradient(
+      112deg,
+      transparent 0 24%,
+      rgba(255, 255, 255, 0.48) 34%,
+      rgba(255, 255, 255, 0.96) 45%,
+      rgba(15, 15, 15, 0.035) 49%,
+      rgba(255, 255, 255, 0.86) 55%,
+      rgba(255, 255, 255, 0.26) 64%,
+      transparent 76% 100%
+    );
+  filter: blur(0.7px);
+  mix-blend-mode: screen;
+  transform: skewX(-4.5deg) translate3d(-58%, 0, 0);
+  will-change: opacity, transform;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--building.is-active .landing-building-material__shine {
+  animation: building-glass-wipe 4.2s cubic-bezier(0.55, 0, 0.18, 1) infinite;
+}
+
+.landing-building-material__fold {
+  left: 12%;
+  width: 82%;
+  opacity: 0.88;
+  background:
+    linear-gradient(90deg, transparent 0 51.8%, rgba(255, 255, 255, 0.78) 51.94%, rgba(15, 15, 15, 0.09) 52.08%, transparent 52.32%),
+    linear-gradient(180deg, transparent 0 47.8%, rgba(255, 255, 255, 0.64) 47.98%, rgba(15, 15, 15, 0.052) 48.16%, transparent 48.44%),
+    linear-gradient(32deg, transparent 0 33%, rgba(255, 255, 255, 0.78) 33.18%, transparent 33.62%),
+    linear-gradient(126deg, transparent 0 68%, rgba(15, 15, 15, 0.052) 68.18%, transparent 68.56%);
+  transform: translate3d(calc(var(--entry-material-shift) * -0.2), 0, 0);
+  filter: blur(0.1px);
+}
+
+.landing-building-material__shadow {
+  left: 18%;
+  width: 70%;
+  top: 50%;
+  height: 42%;
+  opacity: 0.44;
+  background:
+    radial-gradient(ellipse at 54% 82%, rgba(15, 15, 15, 0.075), transparent 55%),
+    linear-gradient(180deg, transparent, rgba(15, 15, 15, 0.026));
+  filter: blur(12px);
+  transform: translate3d(calc(var(--entry-material-shift) * 0.08), 0, 0);
+}
+
+@keyframes building-glass-wipe {
+  0%,
+  24% {
+    opacity: 0;
+    transform: skewX(-4.5deg) translate3d(-62%, 0, 0);
+  }
+
+  48% {
+    opacity: 0.92;
+  }
+
+  82%,
+  100% {
+    opacity: 0;
+    transform: skewX(-4.5deg) translate3d(64%, 0, 0);
+  }
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--voronoi::before {
+  background-image:
+    linear-gradient(24deg, transparent 42%, rgba(15, 15, 15, 0.05) 42.4%, transparent 42.8%),
+    linear-gradient(142deg, transparent 48%, rgba(239, 59, 45, 0.06) 48.3%, transparent 48.8%),
+    radial-gradient(circle at 22% 76%, rgba(15, 15, 15, 0.045) 0 1px, transparent 1.7px),
+    radial-gradient(circle at 48% 62%, rgba(15, 15, 15, 0.035) 0 1px, transparent 1.7px),
+    radial-gradient(circle at 75% 70%, rgba(239, 59, 45, 0.055) 0 1px, transparent 1.8px);
+  background-size:
+    auto,
+    auto,
+    18px 18px,
+    22px 22px,
+    26px 26px;
+  background-position:
+    0 0,
+    0 0,
+    var(--entry-material-shift) 0,
+    var(--entry-material-shift) 0,
+    var(--entry-material-shift) 0;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--voronoi::after {
+  background:
+    radial-gradient(ellipse at 50% 82%, rgba(255, 255, 255, 0.88), transparent 34%),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.42), transparent 55%);
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--map::before {
+  background-image:
+    radial-gradient(ellipse at 54% 55%, transparent 28%, rgba(15, 15, 15, 0.05) 28.5%, transparent 29.1%),
+    radial-gradient(ellipse at 60% 52%, transparent 38%, rgba(239, 59, 45, 0.07) 38.4%, transparent 39%),
+    linear-gradient(96deg, transparent 49%, rgba(15, 15, 15, 0.045) 49.3%, transparent 49.8%),
+    linear-gradient(5deg, transparent 48%, rgba(15, 15, 15, 0.035) 48.2%, transparent 48.8%);
+  background-position:
+    var(--entry-material-shift) 0,
+    var(--entry-material-shift) 0,
+    0 0,
+    0 0;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile--map::after {
+  background:
+    radial-gradient(ellipse at 52% 54%, rgba(255, 255, 255, 0.8), transparent 44%),
+    linear-gradient(105deg, transparent 22%, rgba(255, 255, 255, 0.52) 48%, transparent 70%);
+}
+
+.landing-entry-tile:nth-child(2n) {
+  border-right: 0;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile:nth-child(2n) {
+  border-right: 0;
+}
+
+.landing-entry-tile:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.landing-entry-tile:hover,
+.landing-entry-tile:focus-visible {
+  background: rgba(255, 255, 255, 0.24);
+  outline: none;
+}
+
+.landing-entry-section.is-assembly .landing-entry-tile:hover,
+.landing-entry-section.is-assembly .landing-entry-tile:focus-visible {
+  background: transparent;
+}
+
+.landing-entry-meta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+}
+
+.landing-entry-title {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: clamp(36px, 8vh, 96px);
+  font-family: var(--font-display);
+  font-size: clamp(42px, 6vw, 82px);
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  will-change: transform;
+}
+
+.landing-entry-section.is-assembly .landing-entry-title {
+  max-width: 8ch;
+  font-size: clamp(54px, 9vw, 128px);
+}
+
+.landing-entry-description {
+  position: relative;
+  z-index: 1;
+  display: block;
+  max-width: 26ch;
+  margin-top: 18px;
+  color: var(--ink-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--duration-mid) var(--ease-out),
+    transform var(--duration-mid) var(--ease-emphasized);
+}
+
+.landing-entry-tile:hover .landing-entry-description,
+.landing-entry-tile:focus-visible .landing-entry-description {
+  opacity: 0.62;
+  transform: translateY(0);
+}
+
+.landing-entry-motif {
+  position: absolute;
+  z-index: 1;
+  right: clamp(24px, 5vw, 80px);
+  bottom: clamp(48px, 6vw, 92px);
+  width: min(44%, 260px);
+  height: auto;
+  color: var(--line-soft);
+  opacity: 0.12;
+  pointer-events: none;
+  transform: translate3d(0, 8px, 0);
+  will-change: transform, opacity;
+  transition:
+    color var(--duration-mid) var(--ease-out),
+    opacity var(--duration-mid) var(--ease-out),
+    transform var(--duration-mid) var(--ease-emphasized);
+}
+
+.landing-entry-motif path,
+.landing-entry-motif circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+}
+
+.landing-entry-motif .landing-entry-motif-construction {
+  opacity: 0.48;
+  stroke-dasharray: 3 6;
+}
+
+.landing-entry-motif circle {
+  fill: var(--bg-page);
+}
+
+.landing-entry-motif .landing-entry-motif-accent {
+  fill: var(--accent-red);
+  stroke: none;
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.landing-entry-tile:hover .landing-entry-motif,
+.landing-entry-tile:focus-visible .landing-entry-motif {
+  color: rgba(15, 15, 15, 0.16);
+  opacity: 0.34;
+  transform: translate3d(0, 0, 0);
+}
+
+.landing-entry-tile:hover .landing-entry-motif-accent,
+.landing-entry-tile:focus-visible .landing-entry-motif-accent {
+  opacity: 1;
+}
+
+.landing-entry-affordance {
+  position: absolute;
+  z-index: 1;
+  right: clamp(24px, 4vw, 56px);
+  bottom: clamp(24px, 4vw, 56px);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--ink-tertiary);
+  opacity: 0;
+  transform: translateY(5px);
+  will-change: transform, opacity;
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out);
+}
+
+.landing-entry-tile:hover .landing-entry-affordance,
+.landing-entry-tile:focus-visible .landing-entry-affordance {
+  color: var(--accent-red);
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.landing-entry-chapters {
+  position: absolute;
+  top: 50%;
+  right: clamp(18px, 4vw, 64px);
+  display: grid;
+  gap: 16px;
+  transform: translateY(-50%);
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.landing-entry-section.is-assembly .landing-entry-chapters {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.landing-entry-chapter {
+  position: relative;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  color: var(--ink-tertiary);
+  background: transparent;
+  border: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0.42;
+  transition:
+    color var(--duration-base) var(--ease-out),
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.landing-entry-chapter::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--accent-red);
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.landing-entry-section[data-active-entry="buildings"] .landing-entry-chapter::before {
+  background: rgba(15, 15, 15, 0.46);
+}
+
+.landing-entry-chapter:hover,
+.landing-entry-chapter:focus-visible,
+.landing-entry-chapter.is-active {
+  color: var(--ink-primary);
+  opacity: 1;
+  outline: none;
+  transform: translateX(-3px);
+}
+
+.landing-entry-chapter.is-active::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.landing-entry-section[data-active-entry="buildings"] .landing-entry-chapter.is-active {
+  color: rgba(15, 15, 15, 0.82);
+}
+
+.landing-manifesto {
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.landing-manifesto-inner {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 980px);
+}
+
+.landing-manifesto h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(42px, 7vw, 96px);
+  font-weight: 200;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.landing-circumcircle {
+  width: min(58vw, 320px);
+  margin-block: clamp(28px, 6vh, 72px) clamp(18px, 4vh, 44px);
+  overflow: visible;
+}
+
+.landing-circumcircle-ring,
+.landing-circumcircle-line {
+  fill: none;
+  stroke: var(--line-soft);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.landing-circumcircle-line {
+  stroke: rgba(15, 15, 15, 0.18);
+  stroke-dasharray: 240;
+  animation: landing-path-draw 3.8s var(--ease-emphasized) infinite alternate;
+}
+
+.landing-circumcircle-point {
+  fill: var(--accent-red);
+  opacity: 0.84;
+}
+
+@keyframes landing-path-draw {
+  from {
+    stroke-dashoffset: 240;
+    opacity: 0.24;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.landing-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent-red);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.landing-text-link svg {
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.landing-text-link:hover svg,
+.landing-text-link:focus-visible svg {
+  transform: translate(3px, -3px);
+}
+
+.landing-random {
+  min-height: auto;
+  padding-top: clamp(80px, 10vw, 140px);
+}
+
+.landing-random-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1120px;
+  margin: 0 auto 28px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.landing-random-header h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 5vw, 64px);
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.landing-refresh-button {
+  width: 40px;
+  height: 40px;
+  display: inline-grid;
+  place-items: center;
+  color: var(--ink-secondary);
+  background: transparent;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-pill);
+  transition:
+    color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.landing-refresh-button:hover,
+.landing-refresh-button:focus-visible {
+  color: var(--accent-red);
+  border-color: var(--accent-red);
+  transform: rotate(18deg);
+  outline: none;
+}
+
+.landing-pick-list {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.landing-pick-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1.25fr) minmax(180px, 0.75fr);
+  gap: clamp(14px, 3vw, 36px);
+  align-items: baseline;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line-hair);
+  color: var(--ink-primary);
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.landing-pick-row::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 1px;
+  background: var(--accent-red);
+  transition: width var(--duration-mid) var(--ease-emphasized);
+}
+
+.landing-pick-row:hover {
+  color: var(--accent-red);
+}
+
+.landing-pick-row:hover::after {
+  width: 100%;
+}
+
+.landing-pick-index {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink-tertiary);
+  letter-spacing: 0.08em;
+}
+
+.landing-pick-name {
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: clamp(19px, 2.2vw, 28px);
+  font-weight: 300;
+  line-height: 1.25;
+}
+
+.landing-pick-meta {
+  color: var(--ink-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+}
+
+.landing-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(28px, 6vw, 96px);
+  align-items: end;
+  padding: clamp(64px, 9vw, 120px) clamp(18px, 4vw, 64px) clamp(44px, 6vw, 84px);
+  color: var(--ink-tertiary);
+  border-top: 1px solid var(--line-hair);
+}
+
+.landing-footer p {
+  margin: 0;
+}
+
+.landing-footer-brand {
+  color: var(--ink-primary);
+  font-family: var(--font-display);
+  font-size: clamp(42px, 7vw, 104px);
+  font-weight: 200;
+  line-height: 0.92;
+  letter-spacing: 0.26em;
+}
+
+.landing-footer-title {
+  margin-top: clamp(20px, 3vw, 36px);
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.6vw, 34px);
+  font-weight: 200;
+  color: var(--ink-tertiary);
+}
+
+.landing-footer nav {
+  display: flex;
+  gap: clamp(14px, 3vw, 34px);
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.46;
+  transition: opacity var(--duration-mid) var(--ease-out);
+}
+
+.landing-footer a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.landing-footer a:hover,
+.landing-footer a:focus-visible {
+  color: var(--accent-red);
+  outline: none;
+}
+
+.landing-footer:hover nav,
+.landing-footer:focus-within nav {
+  opacity: 1;
+}
+
+.landing-footer-year {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+
+@media (max-width: 900px) {
+  .landing-entry-grid {
+    min-height: auto;
+  }
+
+  .landing-entry-section.is-assembly .landing-entry-grid {
+    width: min(82vw, 680px);
+  }
+
+  .landing-entry-tile {
+    min-height: 34vh;
+  }
+
+  .landing-entry-title {
+    margin-top: 58px;
+  }
+
+  .landing-pick-row {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .landing-pick-meta {
+    grid-column: 2;
+  }
+
+  .landing-footer {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .landing-footer nav {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .pyramid-hero-title {
+    font-size: clamp(34px, 12vw, 52px);
+    gap: 0.16em;
+  }
+
+  .pyramid-hero-meta {
+    max-width: 28ch;
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .landing-section {
+    padding-inline: 18px;
+  }
+
+  .landing-entry-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-entry-section.is-assembly .landing-entry-grid {
+    width: min(88vw, 420px);
+    min-height: 62vh;
+  }
+
+  .landing-entry-tile {
+    min-height: 52vh;
+    border-right: 0;
+  }
+
+  .landing-entry-tile:nth-last-child(2) {
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .landing-entry-description {
+    opacity: 0.62;
+    transform: none;
+  }
+
+  .landing-entry-motif {
+    width: min(56%, 220px);
+  }
+
+  .fallingwater-model-canvas {
+    right: -10%;
+    top: 15%;
+    width: 104%;
+    height: 56%;
+    opacity: 0.72;
+  }
+
+  .landing-entry-chapters {
+    display: none;
+  }
+
+  .landing-random-header {
+    align-items: center;
+  }
+
+  .landing-pick-row {
+    padding-block: 18px;
+  }
+
+  .landing-pick-meta {
+    font-size: 11px;
+  }
+
+  .landing-footer-brand {
+    font-size: clamp(42px, 18vw, 76px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pyramid-hero-meta,
+  .landing-circumcircle-line {
+    animation: none;
+  }
+
+  .landing-entry-tile,
+  .landing-entry-description,
+  .landing-entry-motif,
+  .landing-building-material,
+  .landing-building-diagram,
+  .fallingwater-model-canvas,
+  .landing-building-material__pane,
+  .landing-building-material__shine,
+  .landing-building-material__fold,
+  .landing-building-material__shadow,
+  .landing-entry-affordance,
+  .landing-entry-chapter,
+  .landing-entry-chapter::before,
+  .landing-footer nav,
+  .landing-refresh-button,
+  .landing-pick-row::after {
+    transition: none;
+  }
+
+  .landing-entry-section.is-assembly .landing-entry-tile--building.is-active .landing-building-material__shine {
+    animation: none;
+  }
 }
