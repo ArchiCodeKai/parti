@@ -1,20 +1,25 @@
 /**
  * /buildings/[slug] · 建築詳情頁
  *
- * 規格見 docs/04-頁面設計/buildings-timeline.md
- * 連結至設計者（/architects）與流派（/movements）。
+ * Server Component + SSG（generateStaticParams / generateMetadata）。
+ * 內文純靜態、無互動 island；連結至設計者（/architects）與流派（/movements）。
+ * 規格見 docs/00-總規格/04-開發路線圖.md T1.2
  */
 
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import {
+  BUILDINGS,
   getBuildingBySlug,
   getBuildingsByArchitect,
 } from "@/lib/data/buildings";
 import { getArchitectBySlug } from "@/lib/data/architects";
 import { getMovementBySlug } from "@/lib/data/movements";
+
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
 
 const TYPE_LABEL: Record<string, string> = {
   residential: "住宅",
@@ -35,22 +40,31 @@ const META: React.CSSProperties = {
   color: "var(--ink-tertiary)",
 };
 
-export default function BuildingPage() {
-  const params = useParams();
-  const router = useRouter();
-  const slug = typeof params.slug === "string" ? params.slug : "";
+export function generateStaticParams() {
+  return BUILDINGS.map((b) => ({ slug: b.id }));
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const building = getBuildingBySlug(slug);
+  if (!building) return {};
+
+  return {
+    title: `${building.name.en} ${building.name.zh} · PARTI`,
+    description: building.bodyText.slice(0, 80),
+    openGraph: {
+      title: `${building.name.en} ${building.name.zh}`,
+      description: building.bodyText.slice(0, 80),
+      type: "article",
+    },
+  };
+}
+
+export default async function BuildingPage({ params }: PageProps) {
+  const { slug } = await params;
   const building = getBuildingBySlug(slug);
 
-  if (!building) {
-    return (
-      <main style={{ padding: "120px var(--space-7)" }}>
-        <p>找不到此建築。</p>
-        <button onClick={() => router.push("/buildings")} className="chip-soft">
-          ← 回建築年表
-        </button>
-      </main>
-    );
-  }
+  if (!building) notFound();
 
   const architect = getArchitectBySlug(building.architect);
   const movement = building.movement

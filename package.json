@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start --port 3737",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "node --test src/**/*.test.mts",
+    "validate": "npx tsx scripts/validate-data.ts"
   },
   "dependencies": {
     "clsx": "^2.1.0",
@@ -17,11 +19,9 @@
     "gsap": "^3.15.0",
     "lenis": "^1.1.0",
     "lucide-react": "^0.456.0",
-    "mapbox-gl": "^3.7.0",
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-force-graph-2d": "^1.27.0",
     "tailwind-merge": "^2.5.0",
     "three": "^0.184.0",
     "zustand": "^5.0.0"
@@ -29,7 +29,6 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
     "@types/d3-delaunay": "^6.0.4",
-    "@types/mapbox-gl": "^3.4.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

@@ -4,11 +4,15 @@ import { CustomCursor } from "@/components/ui/CustomCursor";
 import { CmdKDialog } from "@/components/layout/CmdKDialog";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { CompareBar } from "@/components/layout/CompareBar";
+import { ARCHITECTS } from "@/lib/data/architects";
+import { BUILDINGS } from "@/lib/data/buildings";
+import { MOVEMENTS } from "@/lib/data/movements";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "PARTI · 一部建築圖鑑",
-  description:
-    "An Atlas of Modern Architecture. 200+ 位建築師、600+ 件建築、20 個流派、用幾何原理本身呈現建築知識的結構。",
+  description: `An Atlas of Modern Architecture. ${ARCHITECTS.length} 位建築師、${BUILDINGS.length} 件建築、${MOVEMENTS.length} 個流派、用幾何原理本身呈現建築知識的結構。`,
   openGraph: {
     title: "PARTI · 一部建築圖鑑",
     description: "用幾何原理本身呈現建築知識的結構",

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { FallingwaterModelCanvas } from "./FallingwaterModelCanvas";
 
@@ -16,17 +16,31 @@ type Entry = {
   motif: "graph" | "building" | "voronoi" | "map";
 };
 
-type Pick = {
+export type LandingPick = {
   name: string;
   meta: string;
 };
 
-const entries: Entry[] = [
+export type LandingCounts = {
+  architects: number;
+  buildings: number;
+  movements: number;
+};
+
+interface LandingSectionsProps {
+  counts: LandingCounts;
+  picks: LandingPick[];
+  totalEntries: number;
+}
+
+// 數字由 server 端（src/app/page.tsx）從資料長度導出後以 props 傳入、
+// 避免把整包 data 拉進 client bundle（規範見 docs/00-總規格/02-產品規格書.md 產品原則 5）
+const buildEntries = (counts: LandingCounts): Entry[] => [
   {
     href: "/architects",
     titleZh: "人 物",
     titleEn: "ARCHITECTS",
-    count: "100+",
+    count: `${counts.architects}`,
     description: "從建築師進入流派、作品與思想網絡。",
     motif: "graph",
   },
@@ -34,7 +48,7 @@ const entries: Entry[] = [
     href: "/buildings",
     titleZh: "建 築",
     titleEn: "BUILDINGS",
-    count: "600+",
+    count: `${counts.buildings}`,
     description: "用時間、地點與構造關係閱讀代表作品。",
     motif: "building",
   },
@@ -42,11 +56,12 @@ const entries: Entry[] = [
     href: "/movements",
     titleZh: "運 動",
     titleEn: "MOVEMENTS",
-    count: "20+",
+    count: `${counts.movements}`,
     description: "從現代主義到地域主義，追蹤觀念如何變形。",
     motif: "voronoi",
   },
   {
+    href: "/map",
     titleZh: "地 圖",
     titleEn: "MAP",
     count: "WORLD",
@@ -55,31 +70,21 @@ const entries: Entry[] = [
   },
 ];
 
-const randomPicks: Pick[] = [
-  { name: "Carlo Scarpa 卡羅·斯卡帕", meta: "義大利工藝現代主義" },
-  { name: "廊香教堂 Notre Dame du Haut", meta: "1955 · 粗獷主義" },
-  { name: "Brutalism 粗獷主義", meta: "1950–1975" },
-  { name: "Frank Lloyd Wright 萊特", meta: "1867–1959 · 有機建築" },
-  { name: "落水山莊 Fallingwater", meta: "1935 · Pennsylvania" },
-  { name: "包浩斯 Bauhaus", meta: "1919–1933 · Dessau" },
-  { name: "Tadao Ando 安藤忠雄", meta: "批判性地域主義" },
-  { name: "Mies van der Rohe 密斯", meta: "less is more" },
-  { name: "邁向建築 Vers une architecture", meta: "柯比意 · 1923" },
-  { name: "Metabolism 代謝派", meta: "日本 · 1960–1975" },
-];
+export function LandingSections({ counts, picks, totalEntries }: LandingSectionsProps) {
+  // memo 讓 entries identity 穩定、避免 EntryGridSection 的 GSAP effect 重跑
+  const entries = useMemo(() => buildEntries(counts), [counts]);
 
-export function LandingSections() {
   return (
     <>
-      <EntryGridSection />
+      <EntryGridSection entries={entries} />
       <ManifestoSection />
-      <RandomPicksSection />
+      <RandomPicksSection picks={picks} totalEntries={totalEntries} />
       <LandingFooter />
     </>
   );
 }
 
-function EntryGridSection() {
+function EntryGridSection({ entries }: { entries: Entry[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const surfaceRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -480,7 +485,7 @@ function EntryGridSection() {
       clearBuildingMode();
       cleanupTimeline?.();
     };
-  }, [shouldReduceMotion]);
+  }, [shouldReduceMotion, entries]);
 
   return (
     <section
@@ -598,13 +603,19 @@ function ManifestoSection() {
   );
 }
 
-function RandomPicksSection() {
+function RandomPicksSection({
+  picks,
+  totalEntries,
+}: {
+  picks: LandingPick[];
+  totalEntries: number;
+}) {
   return (
     <section className="landing-section landing-random" aria-labelledby="landing-random-title">
       <div className="landing-random-header">
         <div>
           <p className="landing-section-kicker">04 · Random Picks</p>
-          <h2 id="landing-random-title">10 / 1000</h2>
+          <h2 id="landing-random-title">{picks.length} / {totalEntries}</h2>
         </div>
         <button className="landing-refresh-button" type="button" aria-label="刷新精選詞條">
           <RefreshCw aria-hidden="true" size={16} strokeWidth={1.5} />
@@ -612,7 +623,7 @@ function RandomPicksSection() {
       </div>
 
       <ol className="landing-pick-list">
-        {randomPicks.map((pick, index) => (
+        {picks.map((pick, index) => (
           <li className="landing-pick-row" key={pick.name}>
             <span className="landing-pick-index">{String(index + 1).padStart(2, "0")}</span>
             <span className="landing-pick-name">{pick.name}</span>

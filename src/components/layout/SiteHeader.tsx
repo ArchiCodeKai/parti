@@ -24,7 +24,7 @@ const NAV: NavItem[] = [
   { label: "People", href: "/architects", ready: true },
   { label: "Buildings", href: "/buildings", ready: true },
   { label: "Movements", href: "/movements", ready: true },
-  { label: "Map", href: "/map", ready: false },
+  { label: "Map", href: "/map", ready: true },
 ];
 
 export function SiteHeader() {

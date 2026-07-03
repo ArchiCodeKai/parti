@@ -85,7 +85,7 @@ export default function ArchitectsPage() {
             maxWidth: "640px",
           }}
         >
-          30 位重塑現代建築的人。從柯比意到 Francis Kéré、跨越 130 年的譜系。
+          {ARCHITECTS.length} 位重塑現代建築的人。從柯比意到 Francis Kéré、跨越 130 年的譜系。
         </p>
         <p
           style={{

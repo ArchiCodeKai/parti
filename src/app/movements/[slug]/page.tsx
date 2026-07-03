@@ -1,20 +1,25 @@
 /**
  * /movements/[slug] · 流派詳情頁
  *
- * 規格見 docs/04-頁面設計/movements-flow.md
- * Hero 用 RelationGeometry（核心建築師的 N→幾何）。
+ * Server Component + SSG（generateStaticParams / generateMetadata）。
+ * Hero 用 RelationGeometry（client island）；核心建築師陣列由 server 端算好傳入。
+ * 規格見 docs/00-總規格/04-開發路線圖.md T1.2
  */
 
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import {
+  MOVEMENTS,
   getMovementBySlug,
   getArchitectsByMovement,
 } from "@/lib/data/movements";
 import { RelationGeometry } from "@/components/geometry/RelationGeometry";
 import { nToGeometry } from "@/lib/utils";
+
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
 
 const META: React.CSSProperties = {
   fontFamily: "var(--font-mono)",
@@ -24,22 +29,31 @@ const META: React.CSSProperties = {
   color: "var(--ink-tertiary)",
 };
 
-export default function MovementPage() {
-  const params = useParams();
-  const router = useRouter();
-  const slug = typeof params.slug === "string" ? params.slug : "";
+export function generateStaticParams() {
+  return MOVEMENTS.map((m) => ({ slug: m.id }));
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const movement = getMovementBySlug(slug);
+  if (!movement) return {};
+
+  return {
+    title: `${movement.name.en} ${movement.name.zh} · PARTI`,
+    description: movement.bodyText.slice(0, 80),
+    openGraph: {
+      title: `${movement.name.en} ${movement.name.zh}`,
+      description: movement.bodyText.slice(0, 80),
+      type: "article",
+    },
+  };
+}
+
+export default async function MovementPage({ params }: PageProps) {
+  const { slug } = await params;
   const movement = getMovementBySlug(slug);
 
-  if (!movement) {
-    return (
-      <main style={{ padding: "120px var(--space-7)" }}>
-        <p>找不到此流派。</p>
-        <button onClick={() => router.push("/movements")} className="chip-soft">
-          ← 回流派列表
-        </button>
-      </main>
-    );
-  }
+  if (!movement) notFound();
 
   const architects = getArchitectsByMovement(slug);
   const N = architects.length;

@@ -1,106 +1,61 @@
 /**
  * /architects/[slug] · 建築師個人頁
  *
- * 規格見 docs/04-頁面設計/landing-hero.md (個人頁 brief)
- * 含 Hidden-until-Touched 行為：tag bar、related sidebar
+ * Server Component + SSG（generateStaticParams / generateMetadata）。
+ * 互動部分拆為 client islands：TagBar / BodyGrid / CompareButton / Pullquote。
+ * 規格見 docs/00-總規格/04-開發路線圖.md T1.1
  */
 
-"use client";
-
-import { useEffect, useRef, useState } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import { ARCHITECTS, getArchitectBySlug } from "@/lib/data/architects";
 import { getBuildingBySlug } from "@/lib/data/buildings";
-import { useCompareStore } from "@/store/useCompareStore";
+import type { Architect } from "@/types/entity";
+import { TagBar } from "./TagBar";
+import { BodyGrid } from "./BodyGrid";
+import { CompareButton } from "./CompareButton";
+import { Pullquote } from "./Pullquote";
+import { colorFor } from "./movementColors";
 
-const MOVEMENT_COLORS: Record<string, string> = {
-  purism: "#E63B2E",
-  "international-style": "#0F0F0F",
-  brutalism: "#5B7A82",
-  organic: "#4A6B4D",
-  "prairie-style": "#A8A8A0",
-  modernism: "#3A3A3A",
-  "monumental-modernism": "#444",
-  postmodernism: "#D4B66C",
-  deconstructivism: "#4B6B7A",
-  parametricism: "#6A6B6F",
-  "critical-regionalism": "#6E8478",
-  minimalism: "#C5C0B5",
-  metabolism: "#A8A8A0",
-  "high-tech": "#5B7A82",
-  sustainable: "#4A6B4D",
-  default: "#7A7A7A",
-};
-
-function colorFor(movementId: string): string {
-  return MOVEMENT_COLORS[movementId] ?? MOVEMENT_COLORS.default;
+interface PageProps {
+  params: Promise<{ slug: string }>;
 }
 
-export default function ArchitectPage() {
-  const params = useParams();
-  const router = useRouter();
-  const compareStore = useCompareStore();
+export function generateStaticParams() {
+  return ARCHITECTS.map((a) => ({ slug: a.id }));
+}
 
-  const slug = typeof params.slug === "string" ? params.slug : "";
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const arch = getArchitectBySlug(slug);
+  if (!arch) return {};
+
+  return {
+    title: `${arch.name.en} ${arch.name.zh} · PARTI`,
+    description: arch.bodyText.slice(0, 80),
+    openGraph: {
+      title: `${arch.name.en} ${arch.name.zh}`,
+      description: arch.bodyText.slice(0, 80),
+      type: "profile",
+    },
+  };
+}
+
+export default async function ArchitectPage({ params }: PageProps) {
+  const { slug } = await params;
   const arch = getArchitectBySlug(slug);
 
-  // Hidden-until-Touched：tag bar
-  const [tagsVisible, setTagsVisible] = useState(false);
-  // Hidden-until-Touched：related sidebar
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const tagTimerRef = useRef<NodeJS.Timeout>(undefined);
-
-  useEffect(() => {
-    // 載入 800ms peek
-    const peek = setTimeout(() => {
-      setTagsVisible(true);
-      setTimeout(() => setTagsVisible(false), 2000);
-    }, 800);
-
-    // Scroll trigger
-    const handleScroll = () => {
-      const scrollPercent =
-        (window.scrollY /
-          (document.documentElement.scrollHeight - window.innerHeight)) *
-        100;
-      if (scrollPercent >= 18 && !sidebarVisible) {
-        setSidebarVisible(true);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      clearTimeout(peek);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [sidebarVisible]);
-
-  const showTags = () => {
-    setTagsVisible(true);
-    if (tagTimerRef.current) clearTimeout(tagTimerRef.current);
-    tagTimerRef.current = setTimeout(() => setTagsVisible(false), 3000);
-  };
-
-  if (!arch) {
-    return (
-      <main style={{ padding: "120px var(--space-7)" }}>
-        <p>找不到此建築師。</p>
-        <button onClick={() => router.push("/architects")} className="chip-soft">
-          ← 回人物列表
-        </button>
-      </main>
-    );
-  }
+  if (!arch) notFound();
 
   // 相關建築師（依共同流派）
   const related = ARCHITECTS.filter((a) => {
     if (a.id === arch.id) return false;
     const aMoves = new Set(a.movements.map((m) => m.id));
     return arch.movements.some((m) => aMoves.has(m.id));
-  }).slice(0, 5);
-
-  const isInCompare = compareStore.has(arch.id);
+  })
+    .slice(0, 5)
+    .map((a) => ({ id: a.id, nameEn: a.name.en, nameZh: a.name.zh }));
 
   return (
     <main
@@ -109,7 +64,6 @@ export default function ArchitectPage() {
         maxWidth: "1200px",
         margin: "0 auto",
       }}
-      onMouseMove={showTags}
     >
       {/* Hero */}
       <header style={{ marginBottom: "var(--space-7)" }}>
@@ -173,52 +127,15 @@ export default function ArchitectPage() {
             {arch.nationality.join(" / ")}
           </span>
 
-          <button
-            onClick={() =>
-              isInCompare
-                ? compareStore.remove(arch.id)
-                : compareStore.add(arch.id)
-            }
-            className={`chip-soft ${isInCompare ? "is-active" : ""}`}
-          >
-            {isInCompare ? "✓ 在比較中" : "+ 加入比較"}
-          </button>
+          <CompareButton id={arch.id} />
         </div>
 
         {/* Tag bar · Hidden-until-Touched */}
-        <div
-          className={`huk-hidden ${tagsVisible ? "is-visible" : ""}`}
-          style={{
-            display: "flex",
-            gap: "var(--space-2)",
-            flexWrap: "wrap",
-            marginTop: "var(--space-4)",
-          }}
-        >
-          {arch.movements.map((m) => (
-            <Link
-              key={m.id}
-              href={`/movements/${m.id}`}
-              className="badge-soft"
-              style={{
-                background: m.weight === "primary" ? `${colorFor(m.id)}30` : "rgba(15,15,15,0.04)",
-                color: colorFor(m.id),
-                textDecoration: "none",
-                cursor: "none",
-              }}
-            >
-              {m.id.replace(/-/g, " ").toUpperCase()}
-            </Link>
-          ))}
-        </div>
+        <TagBar movements={arch.movements} />
       </header>
 
       {/* Multi-period timeline bar */}
-      <section
-        style={{
-          marginBottom: "var(--space-7)",
-        }}
-      >
+      <section style={{ marginBottom: "var(--space-7)" }}>
         <p
           style={{
             fontFamily: "var(--font-mono)",
@@ -235,15 +152,7 @@ export default function ArchitectPage() {
       </section>
 
       {/* Body Content + Sidebar */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: sidebarVisible ? "1fr 280px" : "1fr 40px",
-          gap: "var(--space-7)",
-          transition: "grid-template-columns 680ms var(--ease-emphasized)",
-        }}
-      >
-        {/* Main content */}
+      <BodyGrid related={related}>
         <article>
           <p
             style={{
@@ -326,110 +235,13 @@ export default function ArchitectPage() {
             </section>
           )}
         </article>
-
-        {/* Related sidebar · Hidden-until-Touched */}
-        <aside
-          className="glass-thin"
-          style={{
-            position: "sticky",
-            top: "100px",
-            padding: sidebarVisible ? "var(--space-4)" : "var(--space-2)",
-            borderRadius: "var(--r-md)",
-            height: "fit-content",
-            transition: "padding 680ms var(--ease-emphasized)",
-            cursor: "none",
-          }}
-          onMouseEnter={() => setSidebarVisible(true)}
-        >
-          {!sidebarVisible ? (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-2)" }}>
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: "50%",
-                  background: "var(--accent-red)",
-                  animation: "breath 2.4s ease-in-out infinite",
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "9px",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "var(--ink-tertiary)",
-                  writingMode: "vertical-rl",
-                }}
-              >
-                Related
-              </span>
-            </div>
-          ) : (
-            <>
-              <p
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "10px",
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  color: "var(--ink-tertiary)",
-                  margin: "0 0 var(--space-3)",
-                }}
-              >
-                Related · 相關建築師
-              </p>
-              <ul
-                style={{
-                  listStyle: "none",
-                  padding: 0,
-                  margin: 0,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "var(--space-2)",
-                }}
-              >
-                {related.map((r) => (
-                  <li key={r.id}>
-                    <button
-                      onClick={() => router.push(`/architects/${r.id}`)}
-                      style={{
-                        background: "transparent",
-                        border: "none",
-                        padding: "var(--space-2) 0",
-                        textAlign: "left",
-                        cursor: "none",
-                        color: "var(--ink-primary)",
-                        fontFamily: "var(--font-sans)",
-                        fontSize: "13px",
-                        width: "100%",
-                      }}
-                    >
-                      ◦ {r.name.en}
-                      <span
-                        style={{
-                          marginLeft: "var(--space-2)",
-                          color: "var(--ink-tertiary)",
-                          fontSize: "11px",
-                        }}
-                      >
-                        {r.name.zh}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </aside>
-      </div>
+      </BodyGrid>
     </main>
   );
 }
 
-/** 流派彩條時間軸 */
-function TimelineBar({ architect }: { architect: ReturnType<typeof getArchitectBySlug> }) {
-  if (!architect) return null;
+/** 流派彩條時間軸（純渲染、server 端） */
+function TimelineBar({ architect }: { architect: Architect }) {
   const [start, end] = architect.lifespan;
   const lifeRange = (end >= 2099 ? new Date().getFullYear() : end) - start;
 
@@ -474,76 +286,6 @@ function TimelineBar({ architect }: { architect: ReturnType<typeof getArchitectB
           </div>
         );
       })}
-    </div>
-  );
-}
-
-/** Pullquote · scroll-to-reveal 摺疊霜玻璃 */
-function Pullquote({ text }: { text: string }) {
-  const [visible, setVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setVisible(true);
-      },
-      { threshold: 0.4 },
-    );
-    observer.observe(ref.current);
-
-    // Fallback：1.2s 後仍未 trigger 就強制展開
-    const fallback = setTimeout(() => setVisible(true), 1200);
-
-    return () => {
-      observer.disconnect();
-      clearTimeout(fallback);
-    };
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className="glass-frost"
-      style={{
-        margin: "var(--space-7) 0",
-        padding: visible ? "var(--space-7) var(--space-6)" : "var(--space-3)",
-        borderRadius: "var(--r-lg)",
-        textAlign: "center",
-        transition: "padding 680ms var(--ease-emphasized)",
-        overflow: "hidden",
-      }}
-    >
-      {visible ? (
-        <p
-          style={{
-            fontFamily: "var(--font-editorial)",
-            fontStyle: "italic",
-            fontSize: "var(--text-xl)",
-            color: "var(--ink-primary)",
-            margin: 0,
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(20px)",
-            transition: "opacity 500ms 200ms, transform 500ms 200ms",
-          }}
-        >
-          {text}
-        </p>
-      ) : (
-        <p
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "10px",
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: "var(--ink-tertiary)",
-            margin: 0,
-          }}
-        >
-          Quote · Scroll to Reveal
-        </p>
-      )}
     </div>
   );
 }
