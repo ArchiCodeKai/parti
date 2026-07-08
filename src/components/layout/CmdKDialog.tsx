@@ -12,16 +12,17 @@
 
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Fuse from "fuse.js";
-import { ARCHITECTS } from "@/lib/data/architects";
+import {
+  SEARCH_INDEX,
+  DEFAULT_DOCS,
+  SEARCH_TYPE_LABEL,
+  SEARCH_TYPE_ORDER,
+  type SearchDoc,
+} from "@/lib/search";
 import { useCmdKStore } from "@/store/useCmdKStore";
-import type { Architect } from "@/types/entity";
-
-interface SearchResult extends Architect {
-  matchedField?: string;
-}
 
 export function CmdKDialog() {
   const router = useRouter();
@@ -32,16 +33,15 @@ export function CmdKDialog() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Fuse.js singleton
+  // Fuse.js singleton（三類 entity 統一索引）
   const fuse = useMemo(
     () =>
-      new Fuse(ARCHITECTS, {
+      new Fuse(SEARCH_INDEX, {
         keys: [
-          { name: "name.zh", weight: 2 },
-          { name: "name.en", weight: 2 },
-          { name: "name.native", weight: 1.5 },
+          { name: "nameZh", weight: 2 },
+          { name: "nameEn", weight: 2 },
           { name: "tags", weight: 1 },
-          { name: "bodyText", weight: 0.5 },
+          { name: "body", weight: 0.5 },
         ],
         threshold: 0.4,
         includeScore: true,
@@ -49,16 +49,28 @@ export function CmdKDialog() {
     [],
   );
 
-  // 計算搜尋結果
-  const results: SearchResult[] = useMemo(() => {
-    if (!query.trim()) {
-      // 空狀態：顯示重要性最高的前 8 位
-      return [...ARCHITECTS]
-        .sort((a, b) => b.importance - a.importance)
-        .slice(0, 8);
-    }
-    return fuse.search(query).slice(0, 12).map((r) => r.item);
+  // 搜尋結果（空 query 顯示重要性排序的建築師）
+  const results: SearchDoc[] = useMemo(() => {
+    if (!query.trim()) return DEFAULT_DOCS;
+    return fuse.search(query).slice(0, 20).map((r) => r.item);
   }, [query, fuse]);
+
+  // 依 type 分組（固定組別順序），攤平成鍵盤導航用的列，首列標記 groupHead
+  const rows = useMemo(() => {
+    const out: Array<{ doc: SearchDoc; index: number; groupHead: boolean }> = [];
+    let index = 0;
+    for (const type of SEARCH_TYPE_ORDER) {
+      results
+        .filter((r) => r.type === type)
+        .forEach((doc, i) => {
+          out.push({ doc, index, groupHead: i === 0 });
+          index += 1;
+        });
+    }
+    return out;
+  }, [results]);
+
+  const flatDocs = useMemo(() => rows.map((r) => r.doc), [rows]);
 
   // 鍵盤監聽（全域）
   useEffect(() => {
@@ -88,15 +100,15 @@ export function CmdKDialog() {
       // ↑↓ 選擇
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        setSelectedIndex((prev) => Math.min(prev + 1, results.length - 1));
+        setSelectedIndex((prev) => Math.min(prev + 1, flatDocs.length - 1));
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
         setSelectedIndex((prev) => Math.max(prev - 1, 0));
       } else if (e.key === "Enter") {
         e.preventDefault();
-        const selected = results[selectedIndex];
+        const selected = flatDocs[selectedIndex];
         if (selected) {
-          router.push(`/architects/${selected.id}`);
+          router.push(selected.route);
           setOpen(false);
           setQuery("");
         }
@@ -105,7 +117,7 @@ export function CmdKDialog() {
 
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [open, results, selectedIndex, router, setOpen, toggleOpen]);
+  }, [open, flatDocs, selectedIndex, router, setOpen, toggleOpen]);
 
   // 開啟時 focus input + 重置
   useEffect(() => {
@@ -182,6 +194,14 @@ export function CmdKDialog() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="搜尋建築師、建築、流派..."
+            role="combobox"
+            aria-expanded
+            aria-controls="cmdk-listbox"
+            aria-autocomplete="list"
+            aria-activedescendant={
+              flatDocs[selectedIndex] ? `cmdk-opt-${selectedIndex}` : undefined
+            }
+            aria-label="搜尋建築師、建築、流派"
             style={{
               flex: 1,
               background: "transparent",
@@ -198,6 +218,9 @@ export function CmdKDialog() {
 
         {/* Results list */}
         <div
+          id="cmdk-listbox"
+          role="listbox"
+          aria-label="搜尋結果"
           style={{
             overflowY: "auto",
             display: "flex",
@@ -205,7 +228,7 @@ export function CmdKDialog() {
             gap: "2px",
           }}
         >
-          {results.length === 0 ? (
+          {flatDocs.length === 0 ? (
             <div
               style={{
                 padding: "var(--space-5)",
@@ -219,81 +242,73 @@ export function CmdKDialog() {
               找不到 “{query}”
             </div>
           ) : (
-            results.map((result, index) => (
-              <button
-                key={result.id}
-                onClick={() => {
-                  router.push(`/architects/${result.id}`);
-                  setOpen(false);
-                }}
-                onMouseEnter={() => setSelectedIndex(index)}
-                className="parti-card"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr auto",
-                  gap: "var(--space-3)",
-                  padding: "var(--space-3) var(--space-4)",
-                  background:
-                    index === selectedIndex
-                      ? "rgba(230, 59, 46, 0.08)"
-                      : "transparent",
-                  border: "none",
-                  borderRadius: "var(--r-sm)",
-                  textAlign: "left",
-                  cursor: "none",
-                  color:
-                    index === selectedIndex
-                      ? "var(--accent-red)"
-                      : "var(--ink-primary)",
-                  transition: "background 150ms",
-                }}
-              >
-                <div>
+            rows.map(({ doc, index, groupHead }) => (
+              <Fragment key={`${doc.type}-${doc.id}`}>
+                {groupHead && (
                   <div
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "9px",
+                      letterSpacing: "0.22em",
+                      textTransform: "uppercase",
+                      color: "var(--ink-tertiary)",
+                      padding: "var(--space-3) var(--space-4) var(--space-2)",
+                    }}
+                  >
+                    {SEARCH_TYPE_LABEL[doc.type]}
+                  </div>
+                )}
+                <button
+                  id={`cmdk-opt-${index}`}
+                  role="option"
+                  aria-selected={index === selectedIndex}
+                  onClick={() => {
+                    router.push(doc.route);
+                    setOpen(false);
+                  }}
+                  onMouseEnter={() => setSelectedIndex(index)}
+                  className="parti-card"
+                  style={{
+                    display: "flex",
+                    alignItems: "baseline",
+                    gap: "var(--space-3)",
+                    padding: "var(--space-3) var(--space-4)",
+                    background:
+                      index === selectedIndex
+                        ? "rgba(230, 59, 46, 0.08)"
+                        : "transparent",
+                    border: "none",
+                    borderRadius: "var(--r-sm)",
+                    textAlign: "left",
+                    color:
+                      index === selectedIndex
+                        ? "var(--accent-red)"
+                        : "var(--ink-primary)",
+                    transition: "background 150ms",
+                  }}
+                >
+                  <span
                     style={{
                       fontFamily: "var(--font-display)",
                       fontWeight: 300,
                       fontSize: "16px",
                     }}
                   >
-                    {result.name.en}
-                    <span
-                      style={{
-                        marginLeft: "var(--space-3)",
-                        fontFamily: "var(--font-cjk)",
-                        fontWeight: 200,
-                        fontSize: "14px",
-                        color: "var(--ink-secondary)",
-                        letterSpacing: "0.1em",
-                      }}
-                    >
-                      {result.name.zh}
-                    </span>
-                  </div>
-                  <div
+                    {doc.nameEn}
+                  </span>
+                  <span
                     style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "10px",
-                      letterSpacing: "0.18em",
-                      textTransform: "uppercase",
-                      color: "var(--ink-tertiary)",
-                      marginTop: "2px",
+                      fontFamily: "var(--font-cjk)",
+                      fontWeight: 200,
+                      fontSize: "14px",
+                      color: "var(--ink-secondary)",
+                      letterSpacing: "0.1em",
                     }}
                   >
-                    {result.lifespan[0]}–
-                    {result.lifespan[1] >= 2099 ? "" : result.lifespan[1]} ·{" "}
-                    {result.nationality.join(" / ")}
-                  </div>
-                </div>
-                {result.isPritzker && (
-                  <span
-                    className="badge-soft"
-                    style={{ alignSelf: "center" }}
-                  >
-                    Pritzker
+                    {doc.nameZh}
                   </span>
-                )}
-              </button>
+                </button>
+              </Fragment>
             ))
           )}
         </div>

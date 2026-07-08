@@ -19,7 +19,10 @@ import { RelationGeometry } from "@/components/geometry/RelationGeometry";
 import type { Architect } from "@/types/entity";
 
 export default function ComparePage() {
-  const { ids, add, remove, clear } = useCompareStore();
+  const ids = useCompareStore((s) => s.ids);
+  const add = useCompareStore((s) => s.add);
+  const remove = useCompareStore((s) => s.remove);
+  const clear = useCompareStore((s) => s.clear);
   const [searchOpen, setSearchOpen] = useState(false);
 
   const architects = useMemo(
@@ -123,7 +126,6 @@ export default function ComparePage() {
             <button
               onClick={() => remove(arch.id)}
               className="badge-soft"
-              style={{ cursor: "none" }}
             >
               ×
             </button>
@@ -155,13 +157,7 @@ export default function ComparePage() {
             overflowY: "auto",
           }}
         >
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "var(--space-2)",
-            }}
-          >
+          <div className="compare-grid" style={{ gap: "var(--space-2)" }}>
             {ARCHITECTS.filter((a) => !ids.includes(a.id))
               .sort((a, b) => b.importance - a.importance)
               .map((a) => (

@@ -7,7 +7,7 @@ import { CompareBar } from "@/components/layout/CompareBar";
 import { ARCHITECTS } from "@/lib/data/architects";
 import { BUILDINGS } from "@/lib/data/buildings";
 import { MOVEMENTS } from "@/lib/data/movements";
-import { SITE_URL } from "@/lib/site";
+import { SITE_URL, THEME_COLOR } from "@/lib/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   // 強制 light mode、防止 Chrome force-dark / mobile dark mode 翻轉色彩
   other: {
     "color-scheme": "light only",
-    "theme-color": "#FCFBF8",
+    "theme-color": THEME_COLOR,
   },
 };
 

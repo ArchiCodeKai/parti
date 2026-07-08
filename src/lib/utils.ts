@@ -40,3 +40,12 @@ export function nToGeometry(n: number): GeometryType {
   if (n <= 12) return "voronoi";
   return "force-graph";
 }
+
+/**
+ * 生卒年格式化。在世者卒年為哨兵值 2099，顯示為「1929–」；已故顯示「1887–1965」。
+ * 收斂散落各頁的 `lifespan[1] >= 2099` 判斷。
+ */
+export function formatLifespan(lifespan: [number, number]): string {
+  const [start, end] = lifespan;
+  return end >= 2099 ? `${start}–` : `${start}–${end}`;
+}

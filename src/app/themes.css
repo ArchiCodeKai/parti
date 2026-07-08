@@ -107,6 +107,20 @@ body {
 /* Removed body::before paper grain — keep canvas clean */
 
 /* ============================================================
+   Focus-visible · 鍵盤可及性（T2.6）
+   ============================================================ */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible,
+[role="button"]:focus-visible,
+[role="link"]:focus-visible,
+[role="option"]:focus-visible {
+  outline: 2px solid var(--accent-red);
+  outline-offset: 2px;
+}
+
+/* ============================================================
    Typography Utilities
    ============================================================ */
 .editorial { font-family: var(--font-editorial); font-weight: 400; letter-spacing: -0.02em; }
@@ -134,6 +148,24 @@ body {
 .ink-3 { color: var(--ink-tertiary); }
 .red   { color: var(--accent-red); }
 .cyan  { color: var(--accent-cyan); }
+
+/* ============================================================
+   Page shell + meta label · 頁面通用結構（收斂重複 inline）
+   ============================================================ */
+.page-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px var(--space-7) var(--space-9);
+}
+
+/* mono 小字大寫標籤（meta line / kicker 基底） */
+.meta-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+}
 
 /* ============================================================
    .parti-link · in-prose link
@@ -419,6 +451,50 @@ body {
   width: var(--space-4); height: var(--space-4);
   border-radius: 50%; background: var(--accent-red);
   display: inline-block;
+}
+
+/* ============================================================
+   響應式格線（T2.4 RWD）
+   ============================================================ */
+.mosaic-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  grid-auto-flow: dense;
+}
+.decade-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+.decade-label {
+  position: sticky;
+  top: 90px;
+}
+.detail-body-grid {
+  display: grid;
+  grid-template-columns: 1fr var(--sidebar-col, 40px);
+  gap: var(--space-7);
+  transition: grid-template-columns var(--duration-morph) var(--ease-emphasized);
+}
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 900px) {
+  .mosaic-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .detail-body-grid { grid-template-columns: 1fr; }
+  .detail-body-grid > aside { position: static; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .decade-row { grid-template-columns: 1fr; gap: var(--space-3); }
+  .decade-label { position: static; top: auto; }
+}
+@media (max-width: 600px) {
+  .mosaic-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* ============================================================

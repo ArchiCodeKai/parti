@@ -82,7 +82,6 @@ export function ArchitectCard({
         borderRadius: "var(--r-lg)",
         padding: size === "XS" ? "16px" : "20px 24px",
         position: "relative",
-        cursor: "none",
         transformStyle: "preserve-3d",
         perspective: "1000px",
         overflow: "hidden",

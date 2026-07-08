@@ -137,7 +137,7 @@ export const ARCHITECTS: Architect[] = [
     awards: [{ id: "pritzker", year: 1983 }],
     isPritzker: true,
     wordCount: 500,
-    importance: 5,
+    importance: 4,
     tags: ["chinese-american", "louvre", "geometric-clarity"],
     relatedIds: [],
     bodyText:
@@ -176,7 +176,7 @@ export const ARCHITECTS: Architect[] = [
     awards: [{ id: "pritzker", year: 1987 }],
     isPritzker: true,
     wordCount: 800,
-    importance: 5,
+    importance: 4,
     tags: ["metabolism-founder", "tokyo-olympics-1964"],
     relatedIds: [],
     bodyText:
@@ -316,7 +316,7 @@ export const ARCHITECTS: Architect[] = [
     awards: [{ id: "pritzker", year: 1995 }],
     isPritzker: true,
     wordCount: 800,
-    importance: 5,
+    importance: 4,
     tags: ["self-taught", "concrete", "japanese-minimalism"],
     relatedIds: [],
     bodyText:
@@ -373,7 +373,7 @@ export const ARCHITECTS: Architect[] = [
     awards: [{ id: "pritzker", year: 1999 }],
     isPritzker: true,
     wordCount: 500,
-    importance: 5,
+    importance: 4,
     tags: ["high-tech", "sustainability"],
     relatedIds: [],
     bodyText:
@@ -394,7 +394,7 @@ export const ARCHITECTS: Architect[] = [
     awards: [{ id: "pritzker", year: 2000 }],
     isPritzker: true,
     wordCount: 800,
-    importance: 5,
+    importance: 4,
     tags: ["oma", "theory-and-practice"],
     relatedIds: [],
     bodyText:
@@ -413,7 +413,7 @@ export const ARCHITECTS: Architect[] = [
     awards: [{ id: "pritzker", year: 2001 }],
     isPritzker: true,
     wordCount: 800,
-    importance: 5,
+    importance: 4,
     tags: ["swiss", "material-experiment", "duo"],
     relatedIds: [],
     bodyText:
@@ -453,7 +453,7 @@ export const ARCHITECTS: Architect[] = [
     awards: [{ id: "pritzker", year: 2004 }],
     isPritzker: true,
     wordCount: 800,
-    importance: 5,
+    importance: 4,
     tags: ["first-female-pritzker", "parametricism"],
     relatedIds: [],
     bodyText:
@@ -474,7 +474,7 @@ export const ARCHITECTS: Architect[] = [
     awards: [{ id: "pritzker", year: 2009 }],
     isPritzker: true,
     wordCount: 800,
-    importance: 5,
+    importance: 4,
     tags: ["material-poetics", "atmospheres"],
     relatedIds: [],
     bodyText:
@@ -494,7 +494,7 @@ export const ARCHITECTS: Architect[] = [
     awards: [{ id: "pritzker", year: 2010 }],
     isPritzker: true,
     wordCount: 800,
-    importance: 5,
+    importance: 4,
     tags: ["japanese-duo", "transparency", "minimalism"],
     relatedIds: [],
     bodyText:
@@ -513,7 +513,7 @@ export const ARCHITECTS: Architect[] = [
     awards: [{ id: "pritzker", year: 2012 }],
     isPritzker: true,
     wordCount: 800,
-    importance: 5,
+    importance: 4,
     tags: ["chinese", "tile-reuse", "amateur-architecture"],
     relatedIds: [],
     bodyText:
@@ -532,7 +532,7 @@ export const ARCHITECTS: Architect[] = [
     awards: [{ id: "pritzker", year: 2013 }],
     isPritzker: true,
     wordCount: 800,
-    importance: 5,
+    importance: 4,
     tags: ["fluid", "japanese-modernism"],
     relatedIds: [],
     bodyText:

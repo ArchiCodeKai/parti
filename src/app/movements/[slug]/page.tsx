@@ -21,14 +21,6 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-const META: React.CSSProperties = {
-  fontFamily: "var(--font-mono)",
-  fontSize: "10px",
-  letterSpacing: "0.18em",
-  textTransform: "uppercase",
-  color: "var(--ink-tertiary)",
-};
-
 export function generateStaticParams() {
   return MOVEMENTS.map((m) => ({ slug: m.id }));
 }
@@ -67,16 +59,10 @@ export default async function MovementPage({ params }: PageProps) {
     .filter((m): m is NonNullable<typeof m> => Boolean(m));
 
   return (
-    <main
-      style={{
-        padding: "120px var(--space-7) var(--space-9)",
-        maxWidth: "1200px",
-        margin: "0 auto",
-      }}
-    >
+    <main className="page-shell">
       {/* Hero */}
       <header style={{ marginBottom: "var(--space-7)" }}>
-        <p style={{ ...META, color: "var(--accent-red)", fontSize: "11px", letterSpacing: "0.22em" }}>
+        <p className="meta-label" style={{ color: "var(--accent-red)", fontSize: "11px", letterSpacing: "0.22em" }}>
           Movement · 流派
         </p>
         <h1
@@ -122,7 +108,7 @@ export default async function MovementPage({ params }: PageProps) {
               background: movement.colorTheme,
             }}
           />
-          <span style={{ ...META, fontSize: "12px" }}>
+          <span className="meta-label" style={{ fontSize: "12px" }}>
             {movement.era[0]}–{movement.era[1]} · {movement.originLocation.city}
           </span>
         </div>
@@ -144,7 +130,7 @@ export default async function MovementPage({ params }: PageProps) {
         }}
       >
         <RelationGeometry architects={architects} maxWidth={440} />
-        <p style={{ ...META, letterSpacing: "0.22em" }}>
+        <p className="meta-label" style={{ letterSpacing: "0.22em" }}>
           N = {N} · {geometry.toUpperCase().replace(/-/g, " ")}
         </p>
       </section>
@@ -166,13 +152,13 @@ export default async function MovementPage({ params }: PageProps) {
       {/* 核心建築師 */}
       {architects.length > 0 && (
         <section style={{ marginTop: "var(--space-8)" }}>
-          <p style={{ ...META, color: "var(--accent-red)", margin: "0 0 var(--space-4)" }}>
+          <p className="meta-label" style={{ color: "var(--accent-red)", margin: "0 0 var(--space-4)" }}>
             核心建築師 · Architects
           </p>
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(220px, 100%), 1fr))",
               gap: "var(--space-3)",
             }}
           >
@@ -189,7 +175,6 @@ export default async function MovementPage({ params }: PageProps) {
                   borderRadius: "var(--r-md)",
                   textDecoration: "none",
                   color: "var(--ink-primary)",
-                  cursor: "none",
                 }}
               >
                 <span
@@ -220,7 +205,7 @@ export default async function MovementPage({ params }: PageProps) {
       {/* 相關 / 對立流派 */}
       {(linkedMovements.length > 0 || opposing.length > 0) && (
         <section style={{ marginTop: "var(--space-8)" }}>
-          <p style={{ ...META, color: "var(--accent-red)", margin: "0 0 var(--space-4)" }}>
+          <p className="meta-label" style={{ color: "var(--accent-red)", margin: "0 0 var(--space-4)" }}>
             相關流派 · Related
           </p>
           <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>

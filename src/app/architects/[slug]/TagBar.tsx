@@ -9,10 +9,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { colorFor } from "./movementColors";
 
 interface TagBarProps {
-  movements: Array<{ id: string; weight: "primary" | "secondary" }>;
+  movements: Array<{ id: string; weight: "primary" | "secondary"; color: string }>;
 }
 
 export function TagBar({ movements }: TagBarProps) {
@@ -32,11 +31,14 @@ export function TagBar({ movements }: TagBarProps) {
       idleTimerRef.current = setTimeout(() => setVisible(false), 3000);
     };
 
+    // touchstart 給無 hover 的觸控裝置一條顯示路徑
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("touchstart", handleMouseMove, { passive: true });
     return () => {
       clearTimeout(peek);
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchstart", handleMouseMove);
     };
   }, []);
 
@@ -58,11 +60,10 @@ export function TagBar({ movements }: TagBarProps) {
           style={{
             background:
               m.weight === "primary"
-                ? `${colorFor(m.id)}30`
+                ? `${m.color}30`
                 : "rgba(15,15,15,0.04)",
-            color: colorFor(m.id),
+            color: m.color,
             textDecoration: "none",
-            cursor: "none",
           }}
         >
           {m.id.replace(/-/g, " ").toUpperCase()}

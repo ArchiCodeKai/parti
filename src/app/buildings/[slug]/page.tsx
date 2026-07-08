@@ -32,14 +32,6 @@ const TYPE_LABEL: Record<string, string> = {
   infrastructure: "基礎設施",
 };
 
-const META: React.CSSProperties = {
-  fontFamily: "var(--font-mono)",
-  fontSize: "10px",
-  letterSpacing: "0.18em",
-  textTransform: "uppercase",
-  color: "var(--ink-tertiary)",
-};
-
 export function generateStaticParams() {
   return BUILDINGS.map((b) => ({ slug: b.id }));
 }
@@ -75,16 +67,10 @@ export default async function BuildingPage({ params }: PageProps) {
   );
 
   return (
-    <main
-      style={{
-        padding: "120px var(--space-7) var(--space-9)",
-        maxWidth: "1100px",
-        margin: "0 auto",
-      }}
-    >
+    <main className="page-shell" style={{ maxWidth: "1100px" }}>
       {/* Hero */}
       <header style={{ marginBottom: "var(--space-7)" }}>
-        <p style={{ ...META, color: "var(--accent-red)", fontSize: "11px", letterSpacing: "0.22em" }}>
+        <p className="meta-label" style={{ color: "var(--accent-red)", fontSize: "11px", letterSpacing: "0.22em" }}>
           Building · 建築
         </p>
         <h1
@@ -122,7 +108,7 @@ export default async function BuildingPage({ params }: PageProps) {
             flexWrap: "wrap",
           }}
         >
-          <span style={{ ...META, fontSize: "12px" }}>
+          <span className="meta-label" style={{ fontSize: "12px" }}>
             {building.year.design ? `${building.year.design}→` : ""}
             {building.year.completed} · {building.location.city},{" "}
             {building.location.country}
@@ -168,7 +154,7 @@ export default async function BuildingPage({ params }: PageProps) {
       {/* Events timeline */}
       {building.events && building.events.length > 0 && (
         <section style={{ marginBottom: "var(--space-8)" }}>
-          <p style={{ ...META, color: "var(--accent-red)", margin: "0 0 var(--space-4)" }}>
+          <p className="meta-label" style={{ color: "var(--accent-red)", margin: "0 0 var(--space-4)" }}>
             事件 · Timeline
           </p>
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
@@ -182,7 +168,7 @@ export default async function BuildingPage({ params }: PageProps) {
                   borderBottom: "1px solid var(--line-hair)",
                 }}
               >
-                <span style={{ ...META, fontSize: "12px", minWidth: "48px" }}>
+                <span className="meta-label" style={{ fontSize: "12px", minWidth: "48px" }}>
                   {e.year}
                 </span>
                 <span style={{ fontSize: "15px", color: "var(--ink-primary)" }}>
@@ -207,7 +193,7 @@ export default async function BuildingPage({ params }: PageProps) {
           width: "fit-content",
         }}
       >
-        <span style={{ ...META }}>位置</span>
+        <span className="meta-label">位置</span>
         <span style={{ fontFamily: "var(--font-mono)", fontSize: "12px", color: "var(--ink-secondary)" }}>
           {building.location.lat.toFixed(4)}, {building.location.lng.toFixed(4)}
         </span>
@@ -216,7 +202,7 @@ export default async function BuildingPage({ params }: PageProps) {
       {/* 同建築師其他作品 */}
       {architect && siblings.length > 0 && (
         <section>
-          <p style={{ ...META, color: "var(--accent-red)", margin: "0 0 var(--space-4)" }}>
+          <p className="meta-label" style={{ color: "var(--accent-red)", margin: "0 0 var(--space-4)" }}>
             {architect.name.zh}的其他作品
           </p>
           <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>

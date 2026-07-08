@@ -10,6 +10,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ARCHITECTS } from "@/lib/data/architects";
 import { ArchitectCard, type CardSize } from "@/components/cards/ArchitectCard";
+import { formatLifespan } from "@/lib/utils";
 import type { Architect } from "@/types/entity";
 
 /** 依 importance 決定卡片大小 */
@@ -135,22 +136,13 @@ export default function ArchitectsPage() {
       </div>
 
       {/* Mosaic grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "var(--space-4)",
-          gridAutoFlow: "dense",
-        }}
-      >
+      <div className="mosaic-grid">
         {filtered.map((arch) => (
           <ArchitectCard
             key={arch.id}
             size={sizeFor(arch.importance)}
             name={arch.name}
-            lifespan={`${arch.lifespan[0]}${
-              arch.lifespan[1] >= 2099 ? "–" : `–${arch.lifespan[1]}`
-            }`}
+            lifespan={formatLifespan(arch.lifespan)}
             nationality={arch.nationality.join("/")}
             movements={arch.movements
               .filter((m) => m.weight === "primary")

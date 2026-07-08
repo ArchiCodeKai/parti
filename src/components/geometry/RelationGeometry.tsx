@@ -1,17 +1,24 @@
 /**
  * RelationGeometry · N→幾何關係視覺化（共用）
  *
- * 依人數自動套幾何：1 同心圓 / 2 中垂線 / 3 三點定圓 /
- * 4-6 三角網 / 7-12 細胞 / 13+ 力導向圖。
- * 給 Compare 頁與 Movement 詳情頁共用。
+ * 依人數自動套幾何：1 同心圓 / 2 中垂線 / 3 三點定圓（真外接圓）/
+ * 4-6 Delaunay 三角網 / 7+ Voronoi 細胞。點位與幾何運算由
+ * `@/lib/geometry/relation` 純函式確定性輸出（AD-6）。
+ * N≥13 力導向圖 v1 不實作（資料規模到不了）。
  *
- * 規格見 docs/04-頁面設計/compare-tool.md、src/design-reference/design-system/geometry-language.md
+ * 給 Compare 頁與 Movement 詳情頁共用。
  */
 
 "use client";
 
 import { useMemo } from "react";
 import { calculateDispersion } from "@/lib/compare/dispersion";
+import {
+  layoutPoints,
+  circumcircle,
+  delaunayEdges,
+  voronoiCells,
+} from "@/lib/geometry/relation";
 import { nToGeometry } from "@/lib/utils";
 import type { Architect } from "@/types/entity";
 
@@ -34,21 +41,32 @@ export function RelationGeometry({
   const geometry = nToGeometry(n);
   const dispersion = n >= 2 ? calculateDispersion(architects) : 0;
 
-  // N 個點均勻分布在圓上
+  // 確定性點位（角度由出生年排序、半徑受離散度調變）
   const points = useMemo(
-    () =>
-      architects.map((_, i) => {
-        const angle = (i / Math.max(n, 1)) * Math.PI * 2 - Math.PI / 2;
-        const r = n === 1 ? 0 : 120;
-        return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
-      }),
-    [architects, n, cx, cy],
+    () => layoutPoints(architects, size, dispersion),
+    [architects, size, dispersion],
   );
 
-  // N=3 圓圈視覺規範（離散度 → 大小 / 彩度 / 透明度）
-  const circumRadius = 80 + dispersion * 200;
-  const circumSaturation = 80 - dispersion * 50;
-  const circumOpacity = 1.0 - dispersion * 0.5;
+  // N=3 真外接圓（外心通過三點）
+  const circle = useMemo(
+    () => (n === 3 ? circumcircle(points[0], points[1], points[2]) : null),
+    [n, points],
+  );
+
+  // N=4-6 Delaunay 邊
+  const edges = useMemo(
+    () => (n >= 4 && n <= 6 ? delaunayEdges(points) : []),
+    [n, points],
+  );
+
+  // N≥7 Voronoi 細胞
+  const cells = useMemo(
+    () => (n >= 7 ? voronoiCells(points, size) : []),
+    [n, points, size],
+  );
+
+  // N=3 圓的填色濃度隨離散度反向（越集中越實）
+  const circumFillOpacity = 0.05 + (1 - dispersion) * 0.06;
 
   if (n === 0) return null;
 
@@ -78,7 +96,7 @@ export function RelationGeometry({
       )}
 
       {/* N=2 中垂線 */}
-      {geometry === "bisector" && (
+      {geometry === "bisector" && points.length === 2 && (
         <g>
           <line
             x1={points[0].x}
@@ -115,17 +133,20 @@ export function RelationGeometry({
         </g>
       )}
 
-      {/* N=3 三點定圓 */}
-      {geometry === "circumcircle" && (
+      {/* N=3 三點定圓（真外接圓） */}
+      {n === 3 && (
         <g>
-          <circle
-            cx={cx}
-            cy={cy}
-            r={circumRadius}
-            fill={`hsla(5, ${circumSaturation}%, 50%, ${circumOpacity})`}
-            stroke="var(--accent-red)"
-            strokeWidth={1}
-          />
+          {circle && (
+            <circle
+              cx={circle.cx}
+              cy={circle.cy}
+              r={circle.r}
+              fill="var(--accent-red)"
+              fillOpacity={circumFillOpacity}
+              stroke="var(--accent-red)"
+              strokeWidth={1}
+            />
+          )}
           {points.map((p, i) => (
             <g key={i}>
               <line
@@ -143,73 +164,44 @@ export function RelationGeometry({
         </g>
       )}
 
-      {/* N=4-6 Delaunay 三角網（簡化：所有點互連） */}
-      {geometry === "delaunay" && (
+      {/* N=4-6 Delaunay 三角網 */}
+      {n >= 4 && n <= 6 && (
         <g>
-          {points.map((p1, i) =>
-            points.slice(i + 1).map((p2, j) => (
-              <line
-                key={`${i}-${j}`}
-                x1={p1.x}
-                y1={p1.y}
-                x2={p2.x}
-                y2={p2.y}
-                stroke="var(--accent-red)"
-                strokeWidth={0.6}
-                opacity={0.6}
-              />
-            )),
-          )}
+          {edges.map(([p1, p2], i) => (
+            <line
+              key={i}
+              x1={p1.x}
+              y1={p1.y}
+              x2={p2.x}
+              y2={p2.y}
+              stroke="var(--accent-red)"
+              strokeWidth={0.6}
+              opacity={0.6}
+            />
+          ))}
           {points.map((p, i) => (
             <circle key={i} cx={p.x} cy={p.y} r={6} fill="var(--accent-red)" />
           ))}
         </g>
       )}
 
-      {/* N=7-12 Voronoi（簡化：圓點 + 半徑示意） */}
-      {geometry === "voronoi" && (
+      {/* N≥7 Voronoi 細胞 */}
+      {n >= 7 && (
         <g>
-          {points.map((p, i) => (
-            <g key={i}>
-              <circle
-                cx={p.x}
-                cy={p.y}
-                r={40}
+          {cells.map((cell, i) =>
+            cell ? (
+              <polygon
+                key={`cell-${i}`}
+                points={cell.map(([x, y]) => `${x},${y}`).join(" ")}
                 fill="none"
                 stroke="var(--accent-red)"
                 strokeWidth={0.5}
                 opacity={0.4}
-                strokeDasharray="3 3"
               />
-              <circle cx={p.x} cy={p.y} r={5} fill="var(--accent-red)" />
-            </g>
-          ))}
-        </g>
-      )}
-
-      {/* N≥13 Force Graph（簡化：確定性連線約 30% 密度） */}
-      {geometry === "force-graph" && (
-        <g>
-          {points.map((p1, i) =>
-            points.slice(i + 1).map((p2, j) => {
-              // 確定性連線 — 不用 Math.random 避免重繪跳動與 hydration mismatch
-              if ((i * 7 + (i + 1 + j) * 13) % 10 >= 3) return null;
-              return (
-                <line
-                  key={`${i}-${j}`}
-                  x1={p1.x}
-                  y1={p1.y}
-                  x2={p2.x}
-                  y2={p2.y}
-                  stroke="var(--ink-tertiary)"
-                  strokeWidth={0.4}
-                  opacity={0.4}
-                />
-              );
-            }),
+            ) : null,
           )}
           {points.map((p, i) => (
-            <circle key={i} cx={p.x} cy={p.y} r={4} fill="var(--accent-red)" />
+            <circle key={i} cx={p.x} cy={p.y} r={5} fill="var(--accent-red)" />
           ))}
         </g>
       )}

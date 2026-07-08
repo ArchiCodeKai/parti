@@ -71,7 +71,7 @@ export default function MovementsPage() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fill, minmax(min(280px, 100%), 1fr))",
           gap: "var(--space-4)",
         }}
       >
@@ -88,7 +88,6 @@ export default function MovementsPage() {
                 gap: "var(--space-3)",
                 padding: "var(--space-5)",
                 borderRadius: "var(--r-lg)",
-                cursor: "none",
                 textDecoration: "none",
                 color: "var(--ink-primary)",
                 minHeight: "180px",

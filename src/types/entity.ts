@@ -113,4 +113,4 @@ export interface Movement extends BaseEntity {
   derivativeMovements?: string[];
 }
 
-export type Entity = Architect | Building | Movement | BaseEntity;
+export type Entity = Architect | Building | Movement;

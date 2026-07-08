@@ -6,7 +6,7 @@ import {
 import { ARCHITECTS } from "@/lib/data/architects";
 import { BUILDINGS } from "@/lib/data/buildings";
 import { MOVEMENTS } from "@/lib/data/movements";
-import { getPrimaryMovement } from "@/lib/utils";
+import { getPrimaryMovement, formatLifespan } from "@/lib/utils";
 
 const movementNameZh = (id?: string) =>
   MOVEMENTS.find((m) => m.id === id)?.name.zh;
@@ -21,7 +21,7 @@ function buildPicks(): LandingPick[] {
         const movement = movementNameZh(getPrimaryMovement(a));
         return {
           name: `${a.name.en} ${a.name.zh}`,
-          meta: `${a.lifespan[0]}–${a.lifespan[1] >= 2099 ? "" : a.lifespan[1]}${
+          meta: `${formatLifespan(a.lifespan)}${
             movement ? ` · ${movement}` : ""
           }`,
         };

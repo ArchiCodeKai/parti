@@ -41,12 +41,10 @@ export function BodyGrid({
 
   return (
     <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: sidebarVisible ? "1fr 280px" : "1fr 40px",
-        gap: "var(--space-7)",
-        transition: "grid-template-columns 680ms var(--ease-emphasized)",
-      }}
+      className="detail-body-grid"
+      style={
+        { ["--sidebar-col"]: sidebarVisible ? "280px" : "40px" } as React.CSSProperties
+      }
     >
       {children}
 
@@ -60,7 +58,6 @@ export function BodyGrid({
           borderRadius: "var(--r-md)",
           height: "fit-content",
           transition: "padding 680ms var(--ease-emphasized)",
-          cursor: "none",
         }}
         onMouseEnter={() => setSidebarVisible(true)}
       >
@@ -127,7 +124,6 @@ export function BodyGrid({
                       display: "block",
                       padding: "var(--space-2) 0",
                       textDecoration: "none",
-                      cursor: "none",
                       color: "var(--ink-primary)",
                       fontFamily: "var(--font-sans)",
                       fontSize: "13px",

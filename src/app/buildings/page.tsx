@@ -72,18 +72,12 @@ export default function BuildingsPage() {
       {decades.map(({ decade, buildings }) => (
         <section
           key={decade}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "120px 1fr",
-            gap: "var(--space-5)",
-            marginBottom: "var(--space-8)",
-            alignItems: "start",
-          }}
+          className="decade-row"
+          style={{ marginBottom: "var(--space-8)" }}
         >
           <div
+            className="decade-label"
             style={{
-              position: "sticky",
-              top: "90px",
               fontFamily: "var(--font-display)",
               fontWeight: 200,
               fontSize: "var(--text-2xl)",
@@ -96,7 +90,7 @@ export default function BuildingsPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(240px, 100%), 1fr))",
               gap: "var(--space-4)",
             }}
           >
@@ -113,7 +107,6 @@ export default function BuildingsPage() {
                     gap: "var(--space-2)",
                     padding: "var(--space-5)",
                     borderRadius: "var(--r-lg)",
-                    cursor: "none",
                     textDecoration: "none",
                     color: "var(--ink-primary)",
                     minHeight: "150px",

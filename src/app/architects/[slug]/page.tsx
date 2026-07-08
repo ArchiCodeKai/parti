@@ -11,12 +11,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ARCHITECTS, getArchitectBySlug } from "@/lib/data/architects";
 import { getBuildingBySlug } from "@/lib/data/buildings";
+import { getMovementColor } from "@/lib/data/movements";
+import { formatLifespan } from "@/lib/utils";
 import type { Architect } from "@/types/entity";
 import { TagBar } from "./TagBar";
 import { BodyGrid } from "./BodyGrid";
 import { CompareButton } from "./CompareButton";
 import { Pullquote } from "./Pullquote";
-import { colorFor } from "./movementColors";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -58,13 +59,7 @@ export default async function ArchitectPage({ params }: PageProps) {
     .map((a) => ({ id: a.id, nameEn: a.name.en, nameZh: a.name.zh }));
 
   return (
-    <main
-      style={{
-        padding: "120px var(--space-7) var(--space-9)",
-        maxWidth: "1200px",
-        margin: "0 auto",
-      }}
-    >
+    <main className="page-shell">
       {/* Hero */}
       <header style={{ marginBottom: "var(--space-7)" }}>
         <p
@@ -122,16 +117,21 @@ export default async function ArchitectPage({ params }: PageProps) {
               color: "var(--ink-tertiary)",
             }}
           >
-            {arch.lifespan[0]}
-            {arch.lifespan[1] >= 2099 ? "–" : `–${arch.lifespan[1]}`} ·{" "}
+            {formatLifespan(arch.lifespan)} ·{" "}
             {arch.nationality.join(" / ")}
           </span>
 
           <CompareButton id={arch.id} />
         </div>
 
-        {/* Tag bar · Hidden-until-Touched */}
-        <TagBar movements={arch.movements} />
+        {/* Tag bar · Hidden-until-Touched（色值 server 端解析後傳入） */}
+        <TagBar
+          movements={arch.movements.map((m) => ({
+            id: m.id,
+            weight: m.weight,
+            color: getMovementColor(m.id),
+          }))}
+        />
       </header>
 
       {/* Multi-period timeline bar */}
@@ -207,7 +207,6 @@ export default async function ArchitectPage({ params }: PageProps) {
                           gap: "var(--space-3)",
                           padding: "var(--space-3) var(--space-4)",
                           textDecoration: "none",
-                          cursor: "none",
                           color: "var(--ink-primary)",
                           fontFamily: "var(--font-display)",
                           fontWeight: 200,
@@ -267,7 +266,7 @@ function TimelineBar({ architect }: { architect: Architect }) {
               width: `${width}%`,
               top: 0,
               bottom: 0,
-              background: colorFor(m.id),
+              background: getMovementColor(m.id),
               opacity: m.weight === "primary" ? 0.85 : 0.5,
               display: "flex",
               alignItems: "center",
@@ -276,7 +275,7 @@ function TimelineBar({ architect }: { architect: Architect }) {
               fontSize: "9px",
               letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: "#fff",
+              color: "var(--bg-page)",
               overflow: "hidden",
               whiteSpace: "nowrap",
             }}

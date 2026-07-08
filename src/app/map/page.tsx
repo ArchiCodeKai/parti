@@ -175,10 +175,20 @@ export default function MapPage() {
               return (
                 <g
                   key={b.id}
+                  role="link"
+                  tabIndex={0}
+                  aria-label={`${b.name.en} · ${b.location.city}`}
                   onMouseEnter={() => setHovered(b.id)}
                   onMouseLeave={() => setHovered(null)}
+                  onFocus={() => setHovered(b.id)}
+                  onBlur={() => setHovered(null)}
                   onClick={() => router.push(`/buildings/${b.id}`)}
-                  style={{ cursor: "none" }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      router.push(`/buildings/${b.id}`);
+                    }
+                  }}
                 >
                   <title>{`${b.name.en} · ${b.location.city}`}</title>
                   <circle
@@ -248,7 +258,6 @@ export default function MapPage() {
                           padding: "var(--space-2) var(--space-2)",
                           borderRadius: "var(--r-sm)",
                           textDecoration: "none",
-                          cursor: "none",
                           background: isHot ? "rgba(230, 59, 46, 0.08)" : "transparent",
                           color: isHot ? "var(--accent-red)" : "var(--ink-primary)",
                           transition: "background 150ms, color 150ms",

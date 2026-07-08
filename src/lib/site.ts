@@ -7,3 +7,6 @@
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://parti.studio";
+
+/** 瀏覽器 UI theme-color（meta 需字面值，無法引用 CSS token）。須與 themes.css --bg-page 同步。 */
+export const THEME_COLOR = "#FCFBF8";
