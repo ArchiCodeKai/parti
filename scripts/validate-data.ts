@@ -8,8 +8,8 @@
  * 1. id 全域唯一（跨三檔）
  * 2. 三向引用完整性（architect ↔ building ↔ movement）
  * 3. colorTheme 為合法 CSS color 格式
- *
- * TODO Phase 3 — 啟用 bodyText 字數 = wordCount ± 15% 檢查（先 architect、再其他）
+ * 4. bodyText 字數 = wordCount ± 15%（分批啟用：只對 WORD_COUNT_ENFORCED
+ *    名單內的條目強制、其餘彙總為資訊行。流程見 docs/00-總規格/content-checklist.md）
  */
 
 import { ARCHITECTS } from "../src/lib/data/architects";
@@ -78,9 +78,37 @@ for (const m of MOVEMENTS) {
   }
 }
 
+// 4. bodyText 字數 = wordCount ± 15%（分批啟用、名單只加不減）
+// 完成擴寫 + 人審定稿的條目才加入名單；名單外不合格只計數、不擋驗證。
+const WORD_COUNT_ENFORCED = new Set<string>([
+  "le-corbusier",
+  "mies-van-der-rohe",
+  "frank-lloyd-wright",
+  "louis-kahn",
+]);
+const countChars = (s: string) => s.replace(/\s/g, "").length;
+const allEntries = [...ARCHITECTS, ...BUILDINGS, ...MOVEMENTS];
+let wordCountPending = 0;
+for (const e of allEntries) {
+  const actual = countChars(e.bodyText);
+  const ok = actual >= e.wordCount * 0.85 && actual <= e.wordCount * 1.15;
+  if (WORD_COUNT_ENFORCED.has(e.id)) {
+    if (!ok) {
+      errors.push(
+        `${e.id} → bodyText ${actual} 字、超出 wordCount ${e.wordCount} ±15%（${Math.ceil(e.wordCount * 0.85)}–${Math.floor(e.wordCount * 1.15)}）`,
+      );
+    }
+  } else if (!ok) {
+    wordCountPending += 1;
+  }
+}
+
 // 結果
 console.log(
   `資料規模：${ARCHITECTS.length} architects / ${BUILDINGS.length} buildings / ${MOVEMENTS.length} movements`,
+);
+console.log(
+  `字數檢查：強制 ${WORD_COUNT_ENFORCED.size} 條；另 ${wordCountPending} 條未達 ±15%、待 Phase 3 擴寫（資訊）`,
 );
 
 if (errors.length > 0) {
