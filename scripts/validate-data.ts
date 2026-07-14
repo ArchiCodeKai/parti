@@ -81,10 +81,39 @@ for (const m of MOVEMENTS) {
 // 4. bodyText 字數 = wordCount ± 15%（分批啟用、名單只加不減）
 // 完成擴寫 + 人審定稿的條目才加入名單；名單外不合格只計數、不擋驗證。
 const WORD_COUNT_ENFORCED = new Set<string>([
+  // T3.2 四大師
   "le-corbusier",
   "mies-van-der-rohe",
   "frank-lloyd-wright",
   "louis-kahn",
+  // T3.3 batch 1（Pritzker 500）
+  "philip-johnson",
+  "luis-barragan",
+  "ieoh-ming-pei",
+  "richard-meier",
+  "oscar-niemeyer",
+  "aldo-rossi",
+  "alvaro-siza",
+  // T3.3 batch 2（Pritzker 500）
+  "fumihiko-maki",
+  "rafael-moneo",
+  "renzo-piano",
+  "norman-foster",
+  "glenn-murcutt",
+  "shigeru-ban",
+  "francis-kere",
+  // T3.3 batch 3（原 800、已降 500）
+  "kenzo-tange",
+  "frank-gehry",
+  "robert-venturi",
+  "tadao-ando",
+  "rem-koolhaas",
+  "herzog-de-meuron",
+  "zaha-hadid",
+  "peter-zumthor",
+  "sanaa",
+  "wang-shu",
+  "toyo-ito",
 ]);
 const countChars = (s: string) => s.replace(/\s/g, "").length;
 const allEntries = [...ARCHITECTS, ...BUILDINGS, ...MOVEMENTS];
